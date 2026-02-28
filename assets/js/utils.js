@@ -425,22 +425,21 @@ export function generatePrescriptionPDF(rx, patient, doctor) {
 }
 
 /**
- * Upload PDF to Cloudinary - Optimized for Raw Delivery
+ * Upload PDF to Cloudinary - Optimized for Direct Download & Visibility
  */
 export async function uploadPdfToCloudinary(blob, filename) {
     const { cloudName, uploadPreset, apiUrl } = CLOUDINARY_CONFIG;
 
     const formData = new FormData();
-    // Ensure filename ends with .pdf to help Cloudinary's raw storage detection
     const safeName = filename.toLowerCase().endsWith('.pdf') ? filename : `${filename}.pdf`;
     const file = new File([blob], safeName, { type: 'application/pdf' });
-    
+
     formData.append('file', file);
     formData.append('upload_preset', uploadPreset);
-    
-    // Switch to 'raw' to guarantee the file is handled as a document, not an image.
-    // This resolves the 'blank visibility' issue.
-    formData.append('resource_type', 'raw');
+
+    // Using 'auto' allows Cloudinary to handle it as an image/media resource
+    // which provides the best compatibility and preview support.
+    formData.append('resource_type', 'auto');
 
     try {
         const res = await fetch(apiUrl, {
@@ -451,14 +450,21 @@ export async function uploadPdfToCloudinary(blob, filename) {
         if (!res.ok) {
             const errorData = await res.json();
             console.error("Cloudinary Archival Failure:", errorData);
-            throw new Error(errorData.error?.message || 'Storage stream interrupted');
+            throw new Error(errorData.error?.message || 'Storage bank rejected the transmission');
         }
 
         const data = await res.json();
-        // data.secure_url will now correctly point to /raw/upload/ which allows direct PDF viewing
-        return data.secure_url;
+        let url = data.secure_url;
+
+        // Transform the URL to force a direct download when clicked
+        // By injecting fl_attachment after /upload/
+        if (url.includes('/upload/')) {
+            url = url.replace('/upload/', '/upload/fl_attachment/');
+        }
+
+        return url;
     } catch (error) {
-        console.error("Cloudinary Fetch Exception:", error);
+        console.error("Cloudinary Protocol Exception:", error);
         throw error;
     }
 }

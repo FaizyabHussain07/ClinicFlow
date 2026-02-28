@@ -32,5 +32,5 @@ export const rtdb = getDatabase(app);
 export const CLOUDINARY_CONFIG = {
     cloudName: "dxg7emkw9",
     uploadPreset: "clinic-pdf",
-    apiUrl: "https://api.cloudinary.com/v1_1/dxg7emkw9/raw/upload"
+    apiUrl: "https://api.cloudinary.com/v1_1/dxg7emkw9/upload"
 };

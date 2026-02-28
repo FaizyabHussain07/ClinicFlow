@@ -304,11 +304,16 @@
     <script type="module">
         import { requireAuth, logoutUser } from '../auth.js';
         import { addDiseaseForm, getPatientDiseaseForms, getPatientAppointments, getPatientPrescriptions, getUsersByRole } from '../database.js';
-        import { getInitials, formatDate, setupSidebarToggle, showToast } from '../assets/js/utils.js';
+        import { getInitials, formatDate, setupSidebarToggle, showToast, skeletonRows } from '../assets/js/utils.js';
 
         let profile, userId;
 
         async function init() {
+            // Instant Feedback
+            skeletonRows(document.getElementById('history-body'), 3);
+            skeletonRows(document.getElementById('appts-body'), 4);
+            skeletonRows(document.getElementById('rx-body'), 4);
+
             try {
                 const res = await requireAuth('patient');
                 profile = res.profile;
@@ -317,14 +322,21 @@
                 document.getElementById('sidebar-name').textContent = profile.name;
                 document.getElementById('sidebar-avatar').textContent = getInitials(profile.name);
                 document.getElementById('welcome-msg').textContent = `Hello, ${profile.name.split(' ')[0]}`;
-                document.getElementById('topbar-date').textContent = new Date().toLocaleDateString();
+                document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-PK', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
 
                 setupSidebarToggle();
                 document.getElementById('logout-btn').addEventListener('click', logoutUser);
 
                 await reloadAllData();
                 loadProfile();
-            } catch (e) { console.error(e); }
+
+                // Immediate hide
+                const loader = document.getElementById('loading');
+                if (loader) loader.classList.add('hidden');
+            } catch (e) {
+                console.error("Patient Init Error:", e);
+                showToast("Connection issue during dashboard setup.", "error");
+            }
         }
 
         function loadProfile() {
@@ -459,7 +471,10 @@
         };
 
         init();
-        window.addEventListener('load', () => setTimeout(() => document.getElementById('loading').classList.add('hidden'), 500));
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loading');
+            if (loader) loader.classList.add('hidden');
+        });
     </script>
 </body>
 

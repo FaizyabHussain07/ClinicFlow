@@ -1518,9 +1518,7 @@
         // Page Loader hide
         window.addEventListener('load', () => {
             const loader = document.getElementById('loading');
-            setTimeout(() => {
-                loader.classList.add('hidden');
-            }, 600);
+            if (loader) loader.classList.add('hidden');
         });
     </script>
 </body>

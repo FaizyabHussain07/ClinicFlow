@@ -221,7 +221,7 @@
     <script type="module">
         import { requireAuth, logoutUser } from '../auth.js';
         import { getAllAppointments, addAppointment, updateAppointment, deleteAppointment, getUnifiedPatients, getUsersByRole, getDoctorAppointments } from '../database.js';
-        import { showToast, setupSidebarToggle, formatDate, getInitials, statusBadge, capitalize, debounce } from '../assets/js/utils.js';
+        import { showToast, setupSidebarToggle, formatDate, getInitials, statusBadge, capitalize, debounce, skeletonRows } from '../assets/js/utils.js';
 
         let allAppts = [], patients = [], doctors = [], deleteApptId = null;
         let userRole = '', userId = '';
@@ -233,6 +233,10 @@
         };
 
         async function init() {
+            // Instant Feedback
+            const tbody = document.getElementById('appointments-tbody');
+            if (tbody) skeletonRows(tbody, 6);
+
             try {
                 const { profile, user } = await requireAuth(null);
 
@@ -253,7 +257,8 @@
 
                 // Doctors can only update status, not book
                 if (profile.role === 'doctor') {
-                    document.getElementById('book-btn').classList.add('hidden');
+                    const bookBtn = document.getElementById('book-btn');
+                    if (bookBtn) bookBtn.classList.add('hidden');
                 }
 
                 setupSidebarToggle();
@@ -261,12 +266,21 @@
 
                 await reload();
 
-                document.getElementById('search-input').addEventListener('input', debounce(filterAppts, 300));
-                document.getElementById('date-filter').addEventListener('change', filterAppts);
-                document.getElementById('status-filter').addEventListener('change', filterAppts);
+                // Advanced reactive filtering
+                const searchEl = document.getElementById('search-input');
+                const dateEl = document.getElementById('date-filter');
+                const statusEl = document.getElementById('status-filter');
+
+                if (searchEl) searchEl.addEventListener('input', debounce(filterAppts, 300));
+                if (dateEl) dateEl.addEventListener('change', filterAppts);
+                if (statusEl) statusEl.addEventListener('change', filterAppts);
+
+                // Immediate Hide
+                const loader = document.getElementById('loading');
+                if (loader) loader.classList.add('hidden');
             } catch (e) {
-                console.error("Initialization failed:", e);
-                showToast("System error during initialization.", "error");
+                console.error("Appointment Portal Init Error:", e);
+                showToast("Connection failure during scheduling setup.", "error");
             }
         }
 
@@ -441,12 +455,10 @@
 
         init();
 
-        // Hide Loader
+        init();
         window.addEventListener('load', () => {
             const loader = document.getElementById('loading');
-            setTimeout(() => {
-                loader.classList.add('hidden');
-            }, 600);
+            if (loader) loader.classList.add('hidden');
         });
     </script>
 </body>

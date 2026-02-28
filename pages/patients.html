@@ -230,7 +230,7 @@
             getUnifiedPatients, addPatient, updatePatient, deletePatient, getPatient,
             getPatientAppointments, getPatientPrescriptions, getUsersByRole
         } from '../database.js';
-        import { showToast, setupSidebarToggle, formatDate, getInitials, statusBadge, capitalize, debounce } from '../assets/js/utils.js';
+        import { showToast, setupSidebarToggle, formatDate, getInitials, statusBadge, capitalize, debounce, skeletonRows } from '../assets/js/utils.js';
 
         let allPatients = [];
         let deleteId = null;
@@ -261,6 +261,9 @@
         };
 
         async function init() {
+            // Instant Feedback
+            skeletonRows(document.getElementById('patients-tbody'), 7);
+
             try {
                 const { profile } = await requireAuth(null);
 
@@ -280,17 +283,26 @@
 
                 // Only admin & receptionist can add/edit/delete
                 if (profile.role === 'doctor') {
-                    document.getElementById('add-patient-btn').classList.add('hidden');
+                    const addBtn = document.getElementById('add-patient-btn');
+                    if (addBtn) addBtn.classList.add('hidden');
                 }
 
                 setupSidebarToggle();
                 document.getElementById('logout-btn').addEventListener('click', logoutUser);
+
                 await loadPatients();
 
                 // Search
                 document.getElementById('search-input').addEventListener('input', debounce(filterPatients, 300));
                 document.getElementById('gender-filter').addEventListener('change', filterPatients);
-            } catch (e) { }
+
+                // Immediate Hide
+                const loader = document.getElementById('loading');
+                if (loader) loader.classList.add('hidden');
+            } catch (e) {
+                console.error("Patient Portal Error:", e);
+                showToast("System failure during registry initialization.", "error");
+            }
         }
 
         window.loadPatients = async function () {
@@ -539,13 +551,9 @@
         };
 
         init();
-
-        // Hide Loader
         window.addEventListener('load', () => {
             const loader = document.getElementById('loading');
-            setTimeout(() => {
-                loader.classList.add('hidden');
-            }, 600);
+            if (loader) loader.classList.add('hidden');
         });
     </script>
 </body>

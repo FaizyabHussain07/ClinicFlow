@@ -248,11 +248,17 @@
     <script type="module">
         import { requireAuth, logoutUser } from '../auth.js';
         import { getDoctorAppointments, getAllDiseaseForms, addPrescription } from '../database.js';
-        import { getInitials, formatDate, showToast, setupSidebarToggle, generatePrescriptionPDF, uploadPdfToCloudinary } from '../assets/js/utils.js';
+        import {
+            getInitials, formatDate, showToast, setupSidebarToggle, generatePrescriptionPDF,
+            uploadPdfToCloudinary, skeletonRows
+        } from '../assets/js/utils.js';
 
         let profile, userId, allAppts = [], allCases = [], currentAppt = null;
 
         async function init() {
+            // Instant Feedback
+            skeletonRows(document.getElementById('cases-tbody'), 5);
+
             try {
                 const res = await requireAuth('doctor');
                 profile = res.profile;
@@ -261,13 +267,17 @@
                 document.getElementById('sidebar-name').textContent = profile.name;
                 document.getElementById('sidebar-avatar').textContent = getInitials(profile.name);
                 document.getElementById('welcome-msg').textContent = `Dr. ${profile.name}`;
-                document.getElementById('topbar-date').textContent = new Date().toDateString();
+                document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-PK', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
 
                 setupSidebarToggle();
                 document.getElementById('logout-btn').addEventListener('click', logoutUser);
 
                 await reload();
                 loadProfile();
+
+                // Fast hide loader
+                const loader = document.getElementById('loading');
+                if (loader) loader.classList.add('hidden');
 
                 // Tab switching
                 document.querySelectorAll('.nav-item').forEach(item => {
@@ -400,7 +410,10 @@
         };
 
         init();
-        window.addEventListener('load', () => setTimeout(() => document.getElementById('loading').classList.add('hidden'), 500));
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loading');
+            if (loader) loader.classList.add('hidden');
+        });
     </script>
 </body>
 

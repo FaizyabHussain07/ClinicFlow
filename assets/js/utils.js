@@ -3,6 +3,8 @@
 // ClinicFlow - Smart Clinic Management System
 // ============================================================
 
+import { CLOUDINARY_CONFIG } from '../../firebase-config.js';
+
 /**
  * Show a toast notification
  * @param {string} message
@@ -298,103 +300,165 @@ export function animateCounter(id, target) {
  * Generate Prescription PDF using jsPDF
  */
 export function generatePrescriptionPDF(rx, patient, doctor) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    try {
+        const { jsPDF } = window.jspdf;
+        if (!jsPDF) throw new Error("jsPDF library not initialized on this portal.");
+        const doc = new jsPDF();
 
-    // ── Header ──
-    doc.setFontSize(22);
-    doc.setTextColor(26, 115, 232); // Primary Blue
-    doc.text("CLINICFLOW", 20, 20);
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text("Multi-Role Smart Clinic Management System", 20, 26);
-    doc.line(20, 30, 190, 30);
+        // ── Design Tokens ──
+        const PRIMARY_COLOR = [26, 115, 232];
+        const TEXT_COLOR = [30, 41, 59];
+        const MUTED_COLOR = [100, 116, 139];
 
-    // ── Doctor Info ──
-    doc.setFontSize(12);
-    doc.setTextColor(0);
-    doc.text(`Dr. ${doctor.name || 'Staff Doctor'}`, 20, 40);
-    doc.setFontSize(10);
-    doc.text(`${doctor.specialization || 'General Physician'}`, 20, 45);
-    doc.text(`${doctor.qualification || 'MBBS'}`, 20, 50);
+        // ── Header ──
+        doc.setFontSize(24);
+        doc.setTextColor(PRIMARY_COLOR[0], PRIMARY_COLOR[1], PRIMARY_COLOR[2]);
+        doc.setFont("helvetica", "bold");
+        doc.text("CLINICFLOW", 20, 25);
 
-    // ── Patient Info ──
-    doc.setFillColor(245, 248, 252);
-    doc.rect(20, 60, 170, 25, 'F');
-    doc.setFontSize(10);
-    doc.text("PATIENT NAME:", 25, 70);
-    doc.setFont(undefined, 'bold');
-    doc.text(patient.name.toUpperCase(), 60, 70);
-    doc.setFont(undefined, 'normal');
-
-    doc.text("GENDER / AGE:", 25, 78);
-    doc.text(`${patient.gender} / ${patient.age} yrs`, 60, 78);
-    doc.text("DATE:", 140, 70);
-    doc.text(formatDate(rx.createdAt), 155, 70);
-
-    // ── Rx Symbol ──
-    doc.setFontSize(24);
-    doc.setTextColor(26, 115, 232);
-    doc.text("Rx", 20, 105);
-    doc.line(20, 108, 40, 108);
-
-    // ── Medicines Table ──
-    doc.setFontSize(11);
-    doc.setTextColor(0);
-    let y = 120;
-    doc.setFont(undefined, 'bold');
-    doc.text("MEDICINE NAME", 20, y);
-    doc.text("DOSAGE", 100, y);
-    doc.text("DURATION", 150, y);
-    doc.line(20, y + 2, 190, y + 2);
-    y += 10;
-    doc.setFont(undefined, 'normal');
-
-    (rx.medicines || []).forEach(m => {
-        doc.text(m.name, 20, y);
-        doc.text(m.dosage, 100, y);
-        doc.text(m.duration, 150, y);
-        y += 8;
-    });
-
-    // ── Instructions ──
-    if (rx.instructions) {
-        y += 10;
-        doc.setFont(undefined, 'bold');
-        doc.text("DIETARY & GENERAL INSTRUCTIONS:", 20, y);
-        y += 6;
-        doc.setFont(undefined, 'normal');
         doc.setFontSize(10);
-        const lines = doc.splitTextToSize(rx.instructions, 170);
-        doc.text(lines, 20, y);
+        doc.setTextColor(MUTED_COLOR[0], MUTED_COLOR[1], MUTED_COLOR[2]);
+        doc.setFont("helvetica", "normal");
+        doc.text("Smart Clinic Management & Digital Health Records", 20, 31);
+
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 35, 190, 35);
+
+        // ── Doctor Credentials ──
+        doc.setFontSize(12);
+        doc.setTextColor(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
+        doc.setFont("helvetica", "bold");
+        doc.text(`Dr. ${doctor?.name || 'Clinical Staff'}`, 20, 48);
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(MUTED_COLOR[0], MUTED_COLOR[1], MUTED_COLOR[2]);
+        doc.text(`${doctor?.specialization || 'Attending Physician'}`, 20, 53);
+        doc.text(`${doctor?.qualification || 'MBBS / Medical Officer'}`, 20, 58);
+
+        // ── Patient Info Box ──
+        doc.setFillColor(248, 250, 252);
+        doc.rect(20, 68, 170, 28, 'F');
+        doc.setDrawColor(226, 232, 240);
+        doc.rect(20, 68, 170, 28, 'S');
+
+        doc.setFontSize(10);
+        doc.setTextColor(MUTED_COLOR[0], MUTED_COLOR[1], MUTED_COLOR[2]);
+        doc.text("PATIENT NAME", 25, 78);
+        doc.text("GENDER / AGE", 25, 87);
+        doc.text("CONSULT DATE", 130, 78);
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
+        doc.text((patient?.name || 'Anonymous Patient').toUpperCase(), 60, 78);
+        doc.text(`${patient?.gender || 'N/A'} / ${patient?.age || '--'} yrs`, 60, 87);
+        doc.text(formatDate(rx.createdAt || Date.now()), 160, 78);
+
+        // ── Rx Symbol ──
+        doc.setFontSize(28);
+        doc.setTextColor(PRIMARY_COLOR[0], PRIMARY_COLOR[1], PRIMARY_COLOR[2]);
+        doc.text("Rx", 20, 115);
+        doc.setDrawColor(PRIMARY_COLOR[0], PRIMARY_COLOR[1], PRIMARY_COLOR[2]);
+        doc.line(20, 118, 35, 118);
+
+        // ── Prescription Grid ──
+        let currentY = 130;
+        doc.setFontSize(11);
+        doc.setTextColor(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
+        doc.setFont("helvetica", "bold");
+        doc.text("MEDICATION DETAILS", 20, currentY);
+        doc.setTextColor(MUTED_COLOR[0], MUTED_COLOR[1], MUTED_COLOR[2]);
+        doc.text("DOSAGE", 110, currentY);
+        doc.text("DURATION", 160, currentY);
+
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, currentY + 3, 190, currentY + 3);
+        currentY += 12;
+
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
+
+        const meds = rx.medicines || [];
+        if (meds.length === 0) {
+            doc.setFont("helvetica", "italic");
+            doc.text("No specific medications prescribed.", 20, currentY);
+            currentY += 10;
+        } else {
+            meds.forEach(m => {
+                doc.setFont("helvetica", "bold");
+                doc.text(m.name || 'Generic Med', 20, currentY);
+                doc.setFont("helvetica", "normal");
+                doc.text(m.dosage || 'As directed', 110, currentY);
+                doc.text(m.duration || 'Until finish', 160, currentY);
+                currentY += 9;
+            });
+        }
+
+        // ── Clinical Advice ──
+        if (rx.instructions) {
+            currentY += 12;
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(PRIMARY_COLOR[0], PRIMARY_COLOR[1], PRIMARY_COLOR[2]);
+            doc.text("PHYSICIAN ADVICE / INSTRUCTIONS:", 20, currentY);
+            currentY += 7;
+
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
+            doc.setFontSize(10);
+
+            const splitText = doc.splitTextToSize(rx.instructions, 170);
+            doc.text(splitText, 20, currentY);
+            currentY += (splitText.length * 6) + 10;
+        }
+
+        // ── Legal Footer ──
+        doc.setFontSize(8);
+        doc.setTextColor(MUTED_COLOR[0], MUTED_COLOR[1], MUTED_COLOR[2]);
+        doc.text("This document is a digitally issued electronic prescription (E-Rx).", 105, 280, { align: 'center' });
+        doc.text("System ID: " + (rx.id || 'TEMP') + " | ClinicFlow Portal", 105, 285, { align: 'center' });
+
+        return doc.output('blob', { type: 'application/pdf' });
+    } catch (e) {
+        console.error("PDF Generation Failure:", e);
+        throw new Error("Could not assemble prescription layout: " + e.message);
     }
-
-    // ── Footer ──
-    doc.setFontSize(8);
-    doc.setTextColor(150);
-    doc.text("This is a computer-generated prescription and doesn't require a physical signature.", 105, 280, { align: 'center' });
-
-    return doc.output('blob');
 }
 
 /**
- * Upload PDF to Cloudinary
+ * Upload PDF to Cloudinary - Optimized for Raw Delivery
  */
 export async function uploadPdfToCloudinary(blob, filename) {
-    // Note: In a real app, use environment variables for keys.
-    const cloudName = "dxg7emkw9";
-    const uploadPreset = "clinic-pdf";
+    const { cloudName, uploadPreset, apiUrl } = CLOUDINARY_CONFIG;
 
     const formData = new FormData();
-    formData.append('file', blob, filename);
+    // Ensure filename ends with .pdf to help Cloudinary's raw storage detection
+    const safeName = filename.toLowerCase().endsWith('.pdf') ? filename : `${filename}.pdf`;
+    const file = new File([blob], safeName, { type: 'application/pdf' });
+    
+    formData.append('file', file);
     formData.append('upload_preset', uploadPreset);
+    
+    // Switch to 'raw' to guarantee the file is handled as a document, not an image.
+    // This resolves the 'blank visibility' issue.
+    formData.append('resource_type', 'raw');
 
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`, {
-        method: 'POST',
-        body: formData
-    });
+    try {
+        const res = await fetch(apiUrl, {
+            method: 'POST',
+            body: formData
+        });
 
-    if (!res.ok) throw new Error('Cloudinary upload failed');
-    const data = await res.json();
-    return data.secure_url;
+        if (!res.ok) {
+            const errorData = await res.json();
+            console.error("Cloudinary Archival Failure:", errorData);
+            throw new Error(errorData.error?.message || 'Storage stream interrupted');
+        }
+
+        const data = await res.json();
+        // data.secure_url will now correctly point to /raw/upload/ which allows direct PDF viewing
+        return data.secure_url;
+    } catch (error) {
+        console.error("Cloudinary Fetch Exception:", error);
+        throw error;
+    }
 }

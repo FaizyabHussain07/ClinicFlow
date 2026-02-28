@@ -297,25 +297,76 @@
 
     <script type="module">
         import { requireAuth, logoutUser, signupUser } from '../auth.js';
-        import { getAllUsers, getAllAppointments, deleteUserDoc, updateUserActiveStatus } from '../database.js';
-        import { showToast, setupSidebarToggle, animateCounter, getInitials } from '../assets/js/utils.js';
+        import {
+            getAllUsers, getAllPatients, getAllAppointments, getAllPrescriptions,
+            updateUserActiveStatus, deleteUserDoc
+        } from '../database.js';
+        import {
+            showToast, setupSidebarToggle, getInitials, capitalize, animateCounter, formatDate,
+            skeletonRows, skeletonStats
+        } from '../assets/js/utils.js';
 
-        let profile, users = [], appts = [];
+        let users = [], appts = [];
+        let dashboardStats = { patients: 0, doctors: 0, appointments: 0, scripts: 0 };
+        let currentAdmin = null;
 
         async function init() {
+            // Instant Shimmer
+            skeletonStats('stat-patients', 'stat-doctors', 'stat-receptionists', 'stat-appointments');
+            skeletonRows(document.getElementById('users-tbody'), 5);
+
             try {
                 const res = await requireAuth('admin');
-                profile = res.profile;
+                currentAdmin = res.profile;
 
-                document.getElementById('sidebar-name').textContent = profile.name;
-                document.getElementById('sidebar-avatar').textContent = getInitials(profile.name);
-                document.getElementById('topbar-date').textContent = new Date().toDateString();
+                document.getElementById('sidebar-name').textContent = currentAdmin.name;
+                document.getElementById('sidebar-avatar').textContent = getInitials(currentAdmin.name);
+                document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-PK', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
 
                 setupSidebarToggle();
                 document.getElementById('logout-btn').addEventListener('click', logoutUser);
 
+                // Tab Switching for Administrator Profile
+                const navProfile = document.getElementById('nav-profile-link');
+                const dashView = document.getElementById('dashboard-view');
+                const profView = document.getElementById('tab-profile');
+
+                if (navProfile) {
+                    navProfile.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        dashView.style.display = 'none';
+                        profView.style.display = 'block';
+                        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                        navProfile.classList.add('active');
+                    });
+                }
+
+                // Load Profile Data
+                loadAdminProfile(res.user.uid, currentAdmin);
+
                 await reload();
-            } catch (e) { console.error(e); }
+
+                // Fast hide loader
+                const loader = document.getElementById('loading');
+                if (loader) loader.classList.add('hidden');
+            } catch (e) {
+                console.error("Governance Init Error:", e);
+                showToast("Fatal error during system initialization.", "error");
+            }
+        }
+
+        function loadAdminProfile(uid, profile) {
+            const elId = document.getElementById('prof-id');
+            const elName = document.getElementById('prof-name');
+            const elEmail = document.getElementById('prof-email');
+            const elJoined = document.getElementById('prof-joined');
+            const elAvatar = document.getElementById('prof-avatar');
+
+            if (elId) elId.textContent = uid;
+            if (elName) elName.textContent = profile.name;
+            if (elEmail) elEmail.textContent = profile.email;
+            if (elJoined) elJoined.textContent = formatDate(profile.createdAt || Date.now());
+            if (elAvatar) elAvatar.textContent = getInitials(profile.name);
         }
 
         async function reload() {

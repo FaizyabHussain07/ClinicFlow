@@ -226,7 +226,13 @@
                 document.getElementById('logout-btn').addEventListener('click', logoutUser);
 
                 await reload();
-                document.getElementById('search-input').addEventListener('input', debounce(filterRxs, 300));
+
+                const searchEl = document.getElementById('search-input');
+                if (searchEl) searchEl.addEventListener('input', debounce(filterRxs, 300));
+
+                // Immediate Hide
+                const loader = document.getElementById('loading');
+                if (loader) loader.classList.add('hidden');
             } catch (e) {
                 console.error("Prescription Portal Error:", e);
                 showToast("Operational Failure during Initialization.", "error");
@@ -480,13 +486,9 @@
         };
 
         init();
-
-        // Hide Loader
         window.addEventListener('load', () => {
             const loader = document.getElementById('loading');
-            setTimeout(() => {
-                loader.classList.add('hidden');
-            }, 600);
+            if (loader) loader.classList.add('hidden');
         });
     </script>
 </body>

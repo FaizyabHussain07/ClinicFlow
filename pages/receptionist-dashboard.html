@@ -284,11 +284,18 @@
     <script type="module">
         import { requireAuth, logoutUser } from '../auth.js';
         import { getAllDiseaseForms, getUsersByRole, addAppointment, getAllAppointments } from '../database.js';
-        import { getInitials, formatDate, showToast, setupSidebarToggle, animateCounter } from '../assets/js/utils.js';
+        import {
+            getInitials, formatDate, showToast, setupSidebarToggle, animateCounter,
+            skeletonRows, skeletonStats
+        } from '../assets/js/utils.js';
 
         let profile, doctors = [], pendingCases = [], currentCase = null;
 
         async function init() {
+            // Instant UI Response
+            skeletonStats('stat-pending', 'stat-doctors', 'stat-visits');
+            skeletonRows(document.getElementById('cases-tbody'), 5);
+
             try {
                 const res = await requireAuth('receptionist');
                 profile = res.profile;
@@ -296,33 +303,52 @@
                 document.getElementById('sidebar-name').textContent = profile.name;
                 document.getElementById('sidebar-avatar').textContent = getInitials(profile.name);
                 document.getElementById('welcome-msg').textContent = `Staff: ${profile.name.split(' ')[0]}`;
-                document.getElementById('topbar-date').textContent = new Date().toDateString();
+                document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-PK', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
 
                 setupSidebarToggle();
                 document.getElementById('logout-btn').addEventListener('click', logoutUser);
 
-                await reload();
-                loadProfile();
+                // Tab switching for Profile
+                const navProfile = document.getElementById('nav-profile-link');
+                const dashView = document.getElementById('dashboard-view');
+                const profView = document.getElementById('tab-profile');
 
-                // Profile Tab Toggle
-                document.getElementById('nav-profile-link').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    document.getElementById('dashboard-view').style.display = 'none';
-                    document.getElementById('tab-profile').style.display = 'block';
-                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                    document.getElementById('nav-profile-link').classList.add('active');
-                });
-            } catch (e) { console.error(e); }
+                if (navProfile) {
+                    navProfile.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        dashView.style.display = 'none';
+                        profView.style.display = 'block';
+                        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                        navProfile.classList.add('active');
+                    });
+                }
+
+                loadProfile(res.user.uid);
+
+                await reload();
+
+                // Immediate hide
+                const loader = document.getElementById('loading');
+                if (loader) loader.classList.add('hidden');
+            } catch (e) {
+                console.error("Receptionist Init Error:", e);
+                showToast("Connection failure during portal initialization.", "error");
+            }
         }
 
-        function loadProfile() {
+        function loadProfile(uid) {
             if (!profile) return;
-            const resRes = sessionStorage.getItem('userId');
-            document.getElementById('prof-name').textContent = profile.name;
-            document.getElementById('prof-id').textContent = resRes || '—';
-            document.getElementById('prof-email').textContent = profile.email;
-            document.getElementById('prof-joined').textContent = formatDate(profile.createdAt);
-            document.getElementById('prof-avatar').textContent = getInitials(profile.name);
+            const elId = document.getElementById('prof-id');
+            const elName = document.getElementById('prof-name');
+            const elEmail = document.getElementById('prof-email');
+            const elJoined = document.getElementById('prof-joined');
+            const elAvatar = document.getElementById('prof-avatar');
+
+            if (elId) elId.textContent = uid;
+            if (elName) elName.textContent = profile.name;
+            if (elEmail) elEmail.textContent = profile.email;
+            if (elJoined) elJoined.textContent = formatDate(profile.createdAt || Date.now());
+            if (elAvatar) elAvatar.textContent = getInitials(profile.name);
         }
 
         async function reload() {
@@ -422,7 +448,10 @@
         };
 
         init();
-        window.addEventListener('load', () => setTimeout(() => document.getElementById('loading').classList.add('hidden'), 500));
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loading');
+            if (loader) loader.classList.add('hidden');
+        });
     </script>
 </body>
 

@@ -252,7 +252,8 @@
 
         // Loader hide
         window.addEventListener('load', () => {
-            setTimeout(() => document.getElementById('loading').classList.add('hidden'), 600);
+            const loader = document.getElementById('loading');
+            if (loader) loader.classList.add('hidden');
         });
     </script>
 </body>

@@ -296,7 +296,7 @@
     <div class="toast-container" id="toast-container"></div>
 
     <script type="module">
-        import { requireAuth, logoutUser, signupUser } from '../auth.js';
+        import { requireAuth, logoutUser, createStaffAccountByAdmin } from '../auth.js';
         import {
             getAllUsers, getAllPatients, getAllAppointments, getAllPrescriptions,
             updateUserActiveStatus, deleteUserDoc
@@ -437,8 +437,22 @@
             const errEl = document.getElementById('nu-err');
             errEl.classList.remove('show');
 
+            if (!name || !email || !pass) {
+                errEl.textContent = 'Governance Error: All fields are required.';
+                errEl.classList.add('show'); return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                errEl.textContent = 'Governance Error: Please enter a valid email address.';
+                errEl.classList.add('show'); return;
+            }
+            if (pass.length < 6) {
+                errEl.textContent = 'Governance Error: Password must be at least 6 characters.';
+                errEl.classList.add('show'); return;
+            }
+
             try {
-                await signupUser(email, pass, name, role);
+                // Use the secondary app logic to avoid logging out the admin
+                await createStaffAccountByAdmin(email, pass, name, role);
                 showToast('New credentials provisioned successfully.', 'success');
                 closeProvisioningModal();
                 await reload();

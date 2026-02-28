@@ -94,10 +94,7 @@
                         </svg>
                         <input type="password" id="login-password" class="form-control" placeholder="••••••••">
                     </div>
-                    <div style="text-align: right; margin-top: 5px;">
-                        <a href="javascript:void(0)" onclick="toggleAuth('reset')"
-                            style="font-size: 13px; color: var(--primary); text-decoration: none;">Forgot Password?</a>
-                    </div>
+                    
                 </div>
                 <button class="btn btn-primary btn-block btn-lg" id="login-btn" onclick="handleLogin()">
                     <span id="login-text">Sign In</span>
@@ -144,14 +141,7 @@
                     </div>
                 </div>
 
-                <label
-                    style="font-size:12px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Register
-                    As</label>
-                <div class="role-row">
-                    <div class="role-pill selected" data-role="patient" onclick="selectRole(this)">Patient</div>
-                    <div class="role-pill" data-role="doctor" onclick="selectRole(this)">Doctor</div>
-                    <div class="role-pill" data-role="receptionist" onclick="selectRole(this)">Staff</div>
-                </div>
+
 
                 <button class="btn btn-secondary btn-block btn-lg" id="signup-btn" onclick="handleSignup()">
                     <span id="signup-text">Create Account</span>
@@ -181,13 +171,7 @@
                 </button>
                 <div class="login-divider">KNOW YOUR PASSWORD?</div>
                 <button class="btn btn-outline btn-block" onclick="toggleAuth('login')">Back to Login</button>
-                <div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed var(--border);">
-                    <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 5px; text-align: center;">
-                        Emergency Setup (Forgot Admin?)</p>
-                    <button class="btn btn-outline btn-block" onclick="handleSetupAdmin()"
-                        style="font-size: 12px; border-color: #fca5a5; color: #dc2626;">Create default Admin
-                        (admin@gmail.com)</button>
-                </div>
+                
             </div>
         </div>
     </div>
@@ -230,12 +214,7 @@
             }
         };
 
-        let selectedRole = 'patient';
-        window.selectRole = (pill) => {
-            document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('selected'));
-            pill.classList.add('selected');
-            selectedRole = pill.dataset.role;
-        };
+
 
         window.handleLogin = async () => {
             const email = document.getElementById('login-email').value.trim();
@@ -282,8 +261,9 @@
             document.getElementById('signup-text').textContent = 'Registering...';
 
             try {
-                await signupUser(email, pass, name, selectedRole);
-                okEl.textContent = `Account created! Redirecting to your dashboard...`;
+                // Hardcode role to 'patient' for public signups
+                await signupUser(email, pass, name, 'patient');
+                okEl.textContent = `Patient account created! Redirecting to your dashboard...`;
                 okEl.classList.add('show');
             } catch (e) {
                 errEl.textContent = e.message;

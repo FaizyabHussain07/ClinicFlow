@@ -8,7 +8,7 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth
 import { getDatabase } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 // Firebase Configuration – clinic-app-5a960
-const firebaseConfig = {
+export const firebaseConfig = {
     apiKey: "AIzaSyDb9KGgn3THlM_5YLcFiD0zkApepQgJv6A",
     authDomain: "clinic-app-5a960.firebaseapp.com",
     projectId: "clinic-app-5a960",
@@ -19,7 +19,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 
 // Export Auth + Realtime Database instances
 export const auth = getAuth(app);

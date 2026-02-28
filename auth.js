@@ -7,10 +7,12 @@ import {
     signOut,
     onAuthStateChanged,
     createUserWithEmailAndPassword,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    getAuth
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
-import { auth } from './firebase-config.js';
+import { auth, firebaseConfig } from './firebase-config.js';
 import { createUserDoc, getUserDoc } from './database.js';
 
 // ── Role → Dashboard map ─────────────────────────────────────
@@ -25,23 +27,42 @@ const ROLE_REDIRECTS = {
  * Login function
  */
 export async function loginUser(email, password) {
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-    const profile = await getUserDoc(cred.user.uid);
+    try {
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        const profile = await getUserDoc(cred.user.uid);
 
-    if (!profile) {
-        await logoutUser();
-        throw new Error('User profile not found. Please contact administrator.');
+        if (!profile) {
+            await logoutUser();
+            throw new Error('User profile not found. Please contact administrator.');
+        }
+
+        if (profile.active === false) {
+            await logoutUser();
+            throw new Error('This account has been deactivated. Access denied.');
+        }
+
+        // Success → Store metadata and redirect
+        _cacheSession(cred.user.uid, profile);
+        const redirect = ROLE_REDIRECTS[profile.role] || 'index.html';
+        window.location.href = '../' + redirect;
+    } catch (error) {
+        // AUTOCREATE ADMIN: If logging in as the default admin fails, automatically create it!
+        if (email === 'admin@gmail.com' && password === 'adminclinic' && error.code === 'auth/invalid-credential') {
+            try {
+                await createAdminAccount(email, password, 'Clinic Admin');
+                // Retry login after creation
+                const cred = await signInWithEmailAndPassword(auth, email, password);
+                const profile = await getUserDoc(cred.user.uid);
+                _cacheSession(cred.user.uid, profile);
+                window.location.href = '../' + ROLE_REDIRECTS['admin'];
+                return;
+            } catch (createError) {
+                throw new Error("Could not auto-create admin: " + createError.message);
+            }
+        }
+
+        throw error;
     }
-
-    if (profile.active === false) {
-        await logoutUser();
-        throw new Error('This account has been deactivated. Access denied.');
-    }
-
-    // Success → Store metadata and redirect
-    _cacheSession(cred.user.uid, profile);
-    const redirect = ROLE_REDIRECTS[profile.role] || 'index.html';
-    window.location.href = '../' + redirect;
 }
 
 /**
@@ -72,6 +93,41 @@ export async function signupUser(email, password, name, role, isEmergency = fals
 
     const redirect = ROLE_REDIRECTS[role] || 'index.html';
     window.location.href = '../' + redirect;
+}
+
+/**
+ * Admin creates staff without logging out
+ */
+export async function createStaffAccountByAdmin(email, password, name, role) {
+    // Initialize a secondary app just for user creation
+    const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp_" + Date.now());
+    const secondaryAuth = getAuth(secondaryApp);
+
+    try {
+        const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+        const userData = {
+            name,
+            email,
+            role,
+            active: true
+        };
+
+        if (role === 'doctor') {
+            userData.specialization = "General Physician";
+            userData.experience = "0 years";
+            userData.qualification = "MBBS";
+            userData.timing = "9:00 AM - 5:00 PM";
+            userData.contact = email;
+        }
+
+        // Save to RTDB using the main app's connection (already authenticated as admin)
+        await createUserDoc(cred.user.uid, userData);
+
+        // Sign out from the secondary instance to clear it
+        await signOut(secondaryAuth);
+    } catch (e) {
+        throw e;
+    }
 }
 
 /**

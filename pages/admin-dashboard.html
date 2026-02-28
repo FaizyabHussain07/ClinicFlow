@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | ClinicFlow</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+
+<body>
+    <!-- Page Loader -->
+    <div id="loading" class="page-loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                </svg>
+            </div>
+            <div class="loader-spinner"></div>
+            <div class="loader-text">Securing Admin<span>Flow</span></div>
+        </div>
+    </div>
+
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <div class="brand-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <h2>ClinicFlow</h2>
+                        <span>System Control</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebar-avatar">AD</div>
+                <div class="user-info">
+                    <div class="name" id="sidebar-name">Root Admin</div>
+                    <div class="role-badge admin">SYSTEM OVERLORD</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <p class="nav-section-title">System Governance</p>
+                <a href="admin-dashboard.html" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <polyline points="9 22 9 12 15 12 15 22" />
+                    </svg>
+                    Clinic Overview
+                </a>
+                <a href="#users-card" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <circle cx="19" cy="11" r="2" />
+                    </svg>
+                    User Management
+                </a>
+                <a href="#" class="nav-item" id="nav-profile-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    Account Summary
+                </a>
+                <div style="flex:1"></div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-logout" id="logout-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Sign Out
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+                <div class="topbar-title">System Metrics & Governance</div>
+                <div class="topbar-actions">
+                    <span id="topbar-date" style="font-size:12px; font-weight:600; color:var(--text-secondary)"></span>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div id="dashboard-view">
+                    <div class="page-header">
+                        <div class="page-header-left">
+                            <h1>System Intelligence & Governance</h1>
+                            <p>Aggregated operational metrics and global security controls.</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card blue">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                </svg></div>
+                            <div class="stat-body">
+                                <div class="stat-value" id="stat-patients">0</div>
+                                <div class="stat-label">Patients</div>
+                            </div>
+                        </div>
+                        <div class="stat-card purple">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                    <circle cx="8.5" cy="7" r="4" />
+                                    <path d="M18 8l2 2 4-4" />
+                                </svg></div>
+                            <div class="stat-body">
+                                <div class="stat-value" id="stat-doctors">0</div>
+                                <div class="stat-label">Doctors</div>
+                            </div>
+                        </div>
+                        <div class="stat-card orange">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path
+                                        d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                                </svg></div>
+                            <div class="stat-body">
+                                <div class="stat-value" id="stat-receptionists">0</div>
+                                <div class="stat-label">Staff</div>
+                            </div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                    <polyline points="14 2 14 8 20 8" />
+                                </svg></div>
+                            <div class="stat-body">
+                                <div class="stat-value" id="stat-appointments">0</div>
+                                <div class="stat-label">Visits</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="users-card">
+                        <div class="card-header">
+                            <div class="card-title">User Accounts Governance</div>
+                            <div class="header-actions">
+                                <button class="btn-refresh" onclick="reload()" title="Refresh Users">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M23 4v6h-6" />
+                                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                                    </svg>
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="openProvisioningModal()">+ Provision
+                                    User
+                                    Account</button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Full Name</th>
+                                            <th>Account Email</th>
+                                            <th>System Role</th>
+                                            <th>Activation Status</th>
+                                            <th>Governance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="users-tbody">
+                                        <tr>
+                                            <td colspan="5" style="text-align:center;padding:48px;">
+                                                <div class="spinner" style="margin:0 auto"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-profile" style="display:none;">
+                    <div class="page-header">
+                        <div class="page-header-left">
+                            <h1>System Administrator Profile</h1>
+                            <p>Superuser clinical credentials and internal system UID.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="profile-view">
+                                <div class="profile-sidebar">
+                                    <div class="profile-avatar-large" id="prof-avatar">A</div>
+                                    <h2 id="prof-name">—</h2>
+                                    <p class="text-secondary">Global Administrator</p>
+                                </div>
+                                <div class="profile-info">
+                                    <div class="card" style="margin-bottom:0">
+                                        <div class="card-header">
+                                            <div class="card-title">Governance Details</div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div style="margin-bottom:20px;"><label
+                                                    style="font-size:12px; font-weight:700; color:var(--text-muted)">ADMINISTRATOR
+                                                    UID</label>
+                                                <p id="prof-id" style="font-weight:600; margin-top:4px;">—</p>
+                                            </div>
+                                            <div style="margin-bottom:20px;"><label
+                                                    style="font-size:12px; font-weight:700; color:var(--text-muted)">PRIMARY
+                                                    EMAIL</label>
+                                                <p id="prof-email" style="font-weight:600; margin-top:4px;">—</p>
+                                            </div>
+                                            <div style="margin-bottom:20px;"><label
+                                                    style="font-size:12px; font-weight:700; color:var(--text-muted)">SYSTEM
+                                                    JOIN DATE</label>
+                                                <p id="prof-joined" style="font-weight:600; margin-top:4px;">—</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- User Provisioning Modal -->
+    <div id="provision-modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Provision New System Account</div>
+                <div class="modal-close" onclick="closeProvisioningModal()"><svg width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg></div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group"><label>Full Name</label><input type="text" id="nu-name" class="form-control"
+                        placeholder="Dr. Elizabeth"></div>
+                <div class="form-group mt-12" style="margin-top:12px;"><label>Email Address</label><input type="email"
+                        id="nu-email" class="form-control" placeholder="official@clinicflow.pk"></div>
+                <div class="form-group mt-12" style="margin-top:12px;"><label>Initial Password</label><input
+                        type="password" id="nu-pass" class="form-control" placeholder="••••••••"></div>
+                <div class="form-group mt-12" style="margin-top:12px;">
+                    <label>System Privileges</label>
+                    <select id="nu-role" class="form-control">
+                        <option value="doctor">Medical Doctor</option>
+                        <option value="receptionist">Staff / Receptionist</option>
+                        <option value="patient">Standard Patient</option>
+                    </select>
+                </div>
+                <div id="nu-err" class="error-message mt-16"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeProvisioningModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="handleSystemSignup()">Provision Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Change Modal -->
+    <div id="status-modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Account Governance</div>
+            </div>
+            <div class="modal-body">Confirm modification of account access status. Deactivated accounts will be
+                immediately blocked from the system.</div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeStatusModal()">Cancel</button>
+                <button class="btn btn-primary" id="confirm-status-btn">Apply Status Change</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script type="module">
+        import { requireAuth, logoutUser, signupUser } from '../auth.js';
+        import { getAllUsers, getAllAppointments, deleteUserDoc, updateUserActiveStatus } from '../database.js';
+        import { showToast, setupSidebarToggle, animateCounter, getInitials } from '../assets/js/utils.js';
+
+        let profile, users = [], appts = [];
+
+        async function init() {
+            try {
+                const res = await requireAuth('admin');
+                profile = res.profile;
+
+                document.getElementById('sidebar-name').textContent = profile.name;
+                document.getElementById('sidebar-avatar').textContent = getInitials(profile.name);
+                document.getElementById('topbar-date').textContent = new Date().toDateString();
+
+                setupSidebarToggle();
+                document.getElementById('logout-btn').addEventListener('click', logoutUser);
+
+                await reload();
+            } catch (e) { console.error(e); }
+        }
+
+        async function reload() {
+            [users, appts] = await Promise.all([getAllUsers(), getAllAppointments()]);
+            renderStats();
+            renderUsers();
+        }
+
+        function renderStats() {
+            animateCounter('stat-patients', users.filter(u => u.role === 'patient').length);
+            animateCounter('stat-doctors', users.filter(u => u.role === 'doctor').length);
+            animateCounter('stat-receptionists', users.filter(u => u.role === 'receptionist').length);
+            animateCounter('stat-appointments', appts.length);
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('users-tbody');
+            tbody.innerHTML = users.map(u => `
+                <tr>
+                    <td><strong>${u.name}</strong></td>
+                    <td style="font-size:12px; opacity:0.8">${u.email}</td>
+                    <td><span class="status-badge status-confirmed">${u.role.toUpperCase()}</span></td>
+                    <td><span class="status-badge ${u.active !== false ? 'status-completed' : 'status-cancelled'}">${u.active !== false ? 'ACTIVE' : 'LOCKED'}</span></td>
+                    <td>
+                        <div style="display:flex;gap:4px;">
+                            ${u.role !== 'admin' ? `
+                                <button class="btn btn-outline btn-sm" onclick="toggleStatus('${u.id}', ${u.active !== false})">
+                                    ${u.active !== false ? 'Deactivate' : 'Restore'}
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="handleDelete('${u.id}')">Delete</button>
+                            ` : 'Root Privileges'}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.toggleStatus = (uid, currentActive) => {
+            document.getElementById('status-modal-overlay').classList.add('open');
+            document.getElementById('confirm-status-btn').onclick = async () => {
+                try {
+                    await updateUserActiveStatus(uid, !currentActive);
+                    showToast('Security policy updated for account.', 'success');
+                    document.getElementById('status-modal-overlay').classList.remove('open');
+                    await reload();
+                } catch (e) { showToast(e.message, 'error'); }
+            };
+        };
+        window.closeStatusModal = () => document.getElementById('status-modal-overlay').classList.remove('open');
+
+        window.handleDelete = async (uid) => {
+            if (!confirm('This action will permanently erase the user account and associated clinical metadata. Continue?')) return;
+            try {
+                await deleteUserDoc(uid);
+                showToast('Account successfully purged from system.', 'success');
+                await reload();
+            } catch (e) { showToast(e.message, 'error'); }
+        };
+
+        window.openProvisioningModal = () => document.getElementById('provision-modal-overlay').classList.add('open');
+        window.closeProvisioningModal = () => document.getElementById('provision-modal-overlay').classList.remove('open');
+
+        window.handleSystemSignup = async () => {
+            const name = document.getElementById('nu-name').value.trim();
+            const email = document.getElementById('nu-email').value.trim();
+            const pass = document.getElementById('nu-pass').value;
+            const role = document.getElementById('nu-role').value;
+            const errEl = document.getElementById('nu-err');
+            errEl.classList.remove('show');
+
+            try {
+                await signupUser(email, pass, name, role);
+                showToast('New credentials provisioned successfully.', 'success');
+                closeProvisioningModal();
+                await reload();
+            } catch (e) {
+                errEl.textContent = 'Governance Error: ' + e.message;
+                errEl.classList.add('show');
+            }
+        };
+
+        init();
+        // Immediate check for load event to hide spinner if init hasn't yet
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loading');
+            if (loader) loader.classList.add('hidden');
+        });
+    </script>
+</body>
+
+</html>

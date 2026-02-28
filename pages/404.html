@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 – Page Not Found | ClinicFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0d3b3b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Grid dots */
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, .05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        /* Blobs */
+        body::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(26, 115, 232, .15) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            padding: 40px 24px;
+        }
+
+        /* Big 404 */
+        .error-number {
+            font-size: clamp(100px, 20vw, 180px);
+            font-weight: 900;
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 8px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-16px)
+            }
+        }
+
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .error-icon svg {
+            width: 38px;
+            height: 38px;
+            stroke: #60a5fa;
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .error-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .error-subtitle {
+            font-size: 15px;
+            color: rgba(255, 255, 255, .55);
+            line-height: 1.7;
+            max-width: 400px;
+            margin: 0 auto 36px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            text-decoration: none;
+            border: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1a73e8, #1557b0);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(26, 115, 232, .4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26, 115, 232, .5);
+        }
+
+        .btn-outline {
+            border: 2px solid rgba(255, 255, 255, .2);
+            color: rgba(255, 255, 255, .75);
+            background: rgba(255, 255, 255, .06);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, .12);
+            color: #fff;
+        }
+
+        /* Decorative badge */
+        .error-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(239, 68, 68, .15);
+            border: 1px solid rgba(239, 68, 68, .3);
+            color: #fca5a5;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .error-badge span {
+            width: 6px;
+            height: 6px;
+            background: #ef4444;
+            border-radius: 50%;
+        }
+
+        /* Countdown */
+        .countdown {
+            margin-top: 28px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, .35);
+        }
+
+        .countdown strong {
+            color: rgba(255, 255, 255, .6);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="error-icon">
+            <svg viewBox="0 0 24 24">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+        </div>
+
+        <div class="error-badge"><span></span> Access Restricted</div>
+
+        <div class="error-number">404</div>
+
+        <h1 class="error-title">Page Not Found</h1>
+        <p class="error-subtitle">
+            This page doesn't exist or you don't have permission to access it.
+            Please sign in with the correct account.
+        </p>
+
+        <div class="btn-group">
+            <a href="login.html" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                    <polyline points="10 17 15 12 10 7" />
+                    <line x1="15" y1="12" x2="3" y2="12" />
+                </svg>
+                Sign In
+            </a>
+            <a href="../index.html" class="btn btn-outline">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                Go Home
+            </a>
+        </div>
+
+        <div class="countdown">Auto redirecting to login in <strong id="count">5</strong>s</div>
+    </div>
+
+    <script>
+        // Auto redirect countdown
+        let n = 5;
+        const el = document.getElementById('count');
+        const t = setInterval(() => {
+            n--;
+            el.textContent = n;
+            if (n <= 0) { clearInterval(t); window.location.replace('login.html'); }
+        }, 1000);
+    </script>
+</body>
+
+</html>

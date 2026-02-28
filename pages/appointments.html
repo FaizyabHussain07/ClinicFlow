@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Appointments – ClinicFlow</title>
+    <link rel="stylesheet" href="../assets/css/main.css" />
+</head>
+
+<body>
+    <div id="loading" class="page-loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <svg viewBox="0 0 24 24" fill="white">
+                    <path
+                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                </svg>
+            </div>
+            <div class="loader-text">Clinic<span>Flow</span></div>
+            <div class="loader-spinner"></div>
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <div class="brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path
+                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                        </svg></div>
+                    <div class="brand-text">
+                        <h2>ClinicFlow</h2><span id="brand-role">Portal</span>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebar-avatar">--</div>
+                <div class="user-info">
+                    <div class="name" id="sidebar-name">Loading...</div>
+                    <div class="role-badge" id="role-badge-el">Role</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav" id="sidebar-nav"></nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" id="logout-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="topbar">
+                <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+                <h2 class="topbar-title">Appointment Management</h2>
+                <div class="topbar-actions">
+                    <button class="btn btn-primary btn-sm" id="book-btn" onclick="openBookModal()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        Book Appointment
+                    </button>
+                </div>
+            </header>
+
+            <main class="content-area">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Appointments</h1>
+                        <p>Schedule and manage all clinic appointments</p>
+                    </div>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <input type="text" id="search-input" placeholder="Search by patient or doctor name..." />
+                    </div>
+                    <input type="date" class="filter-select" id="date-filter" title="Filter by date" />
+                    <select class="filter-select" id="status-filter">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <button class="btn btn-outline btn-sm" onclick="loadAppointments()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="23 4 23 10 17 10" />
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+
+                <!-- Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
+                            <div>
+                                <div class="card-title">All Appointments</div>
+                                <div class="card-subtitle" id="appt-count"></div>
+                            </div>
+                            <button class="btn-refresh" onclick="reload()" title="Refresh Appointments">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 4v6h-6" />
+                                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Doctor</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Booked On</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appts-tbody">
+                                    <tr>
+                                        <td colspan="6" style="text-align:center;padding:32px;">
+                                            <div class="spinner" style="margin:0 auto;width:28px;height:28px;"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Book / Edit Appointment Modal -->
+    <div class="modal-overlay" id="appt-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="appt-modal-title">Book Appointment</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="appt-form-error" class="error-message"></div>
+                <input type="hidden" id="appt-id" />
+                <div class="form-row mb-16">
+                    <div class="form-group">
+                        <label>Patient *</label>
+                        <select id="appt-patient" class="form-control">
+                            <option value="">Loading patients...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Doctor *</label>
+                        <select id="appt-doctor" class="form-control">
+                            <option value="">Loading doctors...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date *</label>
+                        <input id="appt-date" type="date" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="appt-status" class="form-control">
+                            <option value="Pending">Pending</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeApptModal()">Cancel</button>
+                <button class="btn btn-primary" id="save-appt-btn" onclick="saveAppointment()">
+                    <span id="save-appt-text">Book Appointment</span>
+                    <span id="save-appt-spinner" class="spinner-inline hidden"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm -->
+    <div class="modal-overlay" id="del-appt-modal">
+        <div class="modal" style="max-width:420px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Cancel Appointment?</h3><button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this appointment? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeDelApptModal()">Keep</button>
+                <button class="btn btn-danger" onclick="confirmDeleteAppt()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script type="module">
+        import { requireAuth, logoutUser } from '../auth.js';
+        import { getAllAppointments, addAppointment, updateAppointment, deleteAppointment, getUnifiedPatients, getUsersByRole, getDoctorAppointments } from '../database.js';
+        import { showToast, setupSidebarToggle, formatDate, getInitials, statusBadge, capitalize, debounce } from '../assets/js/utils.js';
+
+        let allAppts = [], patients = [], doctors = [], deleteApptId = null;
+        let userRole = '', userId = '';
+
+        const NAV = {
+            admin: `<p class="nav-section-title">Overview</p><a href="admin-dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a><p class="nav-section-title">Management</p><a href="patients.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Patients</a><a href="appointments.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Appointments</a><a href="prescriptions.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Prescriptions</a>`,
+            doctor: `<p class="nav-section-title">Overview</p><a href="doctor-dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a><p class="nav-section-title">Clinical</p><a href="appointments.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Appointments</a><a href="prescriptions.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Prescriptions</a><a href="patients.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Patients</a>`,
+            receptionist: `<p class="nav-section-title">Overview</p><a href="receptionist-dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a><p class="nav-section-title">Management</p><a href="patients.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Patients</a><a href="appointments.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Appointments</a>`
+        };
+
+        async function init() {
+            try {
+                const { profile, user } = await requireAuth(null);
+
+                // Block patients from staff-only management portal
+                if (profile.role === 'patient') {
+                    window.location.href = 'patient-dashboard.html';
+                    return;
+                }
+
+                userRole = profile.role;
+                userId = user.uid;
+                document.getElementById('sidebar-name').textContent = profile.name;
+                document.getElementById('sidebar-avatar').textContent = getInitials(profile.name);
+                document.getElementById('role-badge-el').textContent = capitalize(profile.role);
+                document.getElementById('role-badge-el').classList.add(profile.role);
+                document.getElementById('brand-role').textContent = capitalize(profile.role) + ' Portal';
+                document.getElementById('sidebar-nav').innerHTML = NAV[profile.role] || NAV.admin;
+
+                // Doctors can only update status, not book
+                if (profile.role === 'doctor') {
+                    document.getElementById('book-btn').classList.add('hidden');
+                }
+
+                setupSidebarToggle();
+                document.getElementById('logout-btn').addEventListener('click', logoutUser);
+
+                await reload();
+
+                document.getElementById('search-input').addEventListener('input', debounce(filterAppts, 300));
+                document.getElementById('date-filter').addEventListener('change', filterAppts);
+                document.getElementById('status-filter').addEventListener('change', filterAppts);
+            } catch (e) {
+                console.error("Initialization failed:", e);
+                showToast("System error during initialization.", "error");
+            }
+        }
+
+        window.reload = async function () {
+            try {
+                // Load reference data
+                [patients, doctors] = await Promise.all([getUnifiedPatients(), getUsersByRole('doctor')]);
+                await loadAppointments();
+            } catch (e) {
+                showToast("Failed to refresh records.", "error");
+            }
+        }
+
+        window.loadAppointments = async function () {
+            const tbody = document.getElementById('appts-tbody');
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;"><div class="spinner" style="margin:0 auto;width:28px;height:28px;"></div></td></tr>`;
+            try {
+                if (userRole === 'doctor') {
+                    allAppts = await getDoctorAppointments(userId);
+                } else {
+                    allAppts = await getAllAppointments();
+                }
+                document.getElementById('appt-count').textContent = `${allAppts.length} appointment${allAppts.length !== 1 ? 's' : ''}`;
+                renderTable(allAppts);
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="6" style="color:var(--danger);text-align:center;padding:24px;">
+                    <div style="font-size:14px;font-weight:600;">Unable to load appointments</div>
+                    <div style="font-size:12px;opacity:0.7;">${e.message || 'Check database connection.'}</div>
+                </td></tr>`;
+            }
+        };
+
+        function renderTable(appts) {
+            const tbody = document.getElementById('appts-tbody');
+            const patMap = Object.fromEntries(patients.map(p => [p.id, p]));
+            const docMap = Object.fromEntries(doctors.map(d => [d.id, d]));
+            const STATUSES = ['Pending', 'Confirmed', 'Completed', 'Cancelled'];
+            const canBook = userRole !== 'doctor';
+
+            if (!appts.length) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:36px;color:var(--text-muted);">No appointments found</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = appts.map(a => `
+        <tr>
+          <td><strong>${patMap[a.patientId]?.name || '—'}</strong></td>
+          <td>Dr. ${docMap[a.doctorId]?.name || '—'}</td>
+          <td>${a.date || '—'}</td>
+          <td>${statusBadge(a.status)}</td>
+          <td>${formatDate(a.createdAt)}</td>
+          <td>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <select class="filter-select" style="font-size:11px;" onchange="quickStatus('${a.id}',this.value)">
+                ${STATUSES.map(s => `<option value="${s}"${a.status === s ? ' selected' : ''}>${s}</option>`).join('')}
+              </select>
+              ${canBook ? `
+                <button class="btn btn-primary btn-sm" onclick="editAppt('${a.id}')">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteApptConfirm('${a.id}')">Del</button>
+              ` : ''}
+            </div>
+          </td>
+        </tr>`).join('');
+        }
+
+        function filterAppts() {
+            const q = document.getElementById('search-input').value.toLowerCase();
+            const d = document.getElementById('date-filter').value;
+            const s = document.getElementById('status-filter').value;
+            const patMap = Object.fromEntries(patients.map(p => [p.id, p]));
+            const docMap = Object.fromEntries(doctors.map(doc => [doc.id, doc]));
+            const filtered = allAppts.filter(a => {
+                const pName = (patMap[a.patientId]?.name || '').toLowerCase();
+                const dName = (docMap[a.doctorId]?.name || '').toLowerCase();
+                return (!q || pName.includes(q) || dName.includes(q))
+                    && (!d || a.date === d)
+                    && (!s || a.status === s);
+            });
+            renderTable(filtered);
+        }
+
+        // ─── Book Appointment ────────────────────────────────────
+        window.openBookModal = function () {
+            document.getElementById('appt-id').value = '';
+            document.getElementById('appt-modal-title').textContent = 'Book Appointment';
+            document.getElementById('save-appt-text').textContent = 'Book Appointment';
+            document.getElementById('appt-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('appt-status').value = 'Pending';
+            populateDropdowns();
+            document.getElementById('appt-form-error').classList.remove('show');
+            document.getElementById('appt-modal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        };
+
+        function populateDropdowns(selPatient = '', selDoctor = '') {
+            const ps = document.getElementById('appt-patient');
+            const ds = document.getElementById('appt-doctor');
+            ps.innerHTML = `<option value="">Select patient</option>` + patients.map(p => `<option value="${p.id}"${p.id === selPatient ? ' selected' : ''}>${p.name}</option>`).join('');
+            ds.innerHTML = `<option value="">Select doctor</option>` + doctors.map(d => `<option value="${d.id}"${d.id === selDoctor ? ' selected' : ''}>Dr. ${d.name}</option>`).join('');
+        }
+
+        window.editAppt = function (id) {
+            const a = allAppts.find(x => x.id === id);
+            if (!a) return;
+            document.getElementById('appt-id').value = a.id;
+            document.getElementById('appt-date').value = a.date;
+            document.getElementById('appt-status').value = a.status;
+            document.getElementById('appt-modal-title').textContent = 'Edit Appointment';
+            document.getElementById('save-appt-text').textContent = 'Update';
+            populateDropdowns(a.patientId, a.doctorId);
+            document.getElementById('appt-form-error').classList.remove('show');
+            document.getElementById('appt-modal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeApptModal = function () {
+            document.getElementById('appt-modal').classList.remove('open');
+            document.body.style.overflow = '';
+        };
+
+        window.saveAppointment = async function () {
+            const id = document.getElementById('appt-id').value;
+            const patId = document.getElementById('appt-patient').value;
+            const docId = document.getElementById('appt-doctor').value;
+            const date = document.getElementById('appt-date').value;
+            const status = document.getElementById('appt-status').value;
+            const errEl = document.getElementById('appt-form-error');
+            errEl.classList.remove('show');
+
+            if (!patId || !docId || !date) {
+                errEl.textContent = 'Patient, doctor, and date are required.';
+                errEl.classList.add('show'); return;
+            }
+
+            const btn = document.getElementById('save-appt-btn');
+            btn.disabled = true;
+            document.getElementById('save-appt-spinner').classList.remove('hidden');
+
+            try {
+                const data = { patientId: patId, doctorId: docId, date, status };
+                if (id) { await updateAppointment(id, data); showToast('Appointment updated!', 'success'); }
+                else { await addAppointment(data); showToast('Appointment booked!', 'success'); }
+                closeApptModal();
+                await loadAppointments();
+            } catch (e) {
+                errEl.textContent = 'Error: ' + e.message;
+                errEl.classList.add('show');
+            } finally {
+                btn.disabled = false;
+                document.getElementById('save-appt-spinner').classList.add('hidden');
+            }
+        };
+
+        window.quickStatus = async function (id, status) {
+            try {
+                await updateAppointment(id, { status });
+                showToast(`Status → ${status}`, 'success');
+                await loadAppointments();
+            } catch (e) { showToast('Update failed', 'error'); }
+        };
+
+        window.deleteApptConfirm = function (id) { deleteApptId = id; document.getElementById('del-appt-modal').classList.add('open'); document.body.style.overflow = 'hidden'; };
+        window.closeDelApptModal = function () { document.getElementById('del-appt-modal').classList.remove('open'); document.body.style.overflow = ''; };
+        window.confirmDeleteAppt = async function () {
+            if (!deleteApptId) return;
+            try {
+                await deleteAppointment(deleteApptId);
+                showToast('Appointment deleted.', 'success');
+                closeDelApptModal();
+                await loadAppointments();
+            } catch (e) { showToast('Unable to delete appointment at this time.', 'error'); }
+        };
+
+        init();
+
+        // Hide Loader
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loading');
+            setTimeout(() => {
+                loader.classList.add('hidden');
+            }, 600);
+        });
+    </script>
+</body>
+
+</html>

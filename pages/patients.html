@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patients – ClinicFlow</title>
+    <link rel="stylesheet" href="../assets/css/main.css" />
+</head>
+
+<body>
+    <div id="loading" class="page-loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <svg viewBox="0 0 24 24" fill="white">
+                    <path
+                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                </svg>
+            </div>
+            <div class="loader-text">Clinic<span>Flow</span></div>
+            <div class="loader-spinner"></div>
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="app-layout">
+        <!-- SIDEBAR (injected by role) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <div class="brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path
+                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                        </svg></div>
+                    <div class="brand-text">
+                        <h2>ClinicFlow</h2><span id="brand-role">Portal</span>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebar-avatar">--</div>
+                <div class="user-info">
+                    <div class="name" id="sidebar-name">Loading...</div>
+                    <div class="role-badge" id="role-badge-el">Role</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav" id="sidebar-nav"><!-- filled by JS --></nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" id="logout-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="topbar">
+                <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+                <h2 class="topbar-title">Patient Management</h2>
+                <div class="topbar-actions">
+                    <button class="btn btn-primary btn-sm" id="add-patient-btn" onclick="openAddModal()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        Add Patient
+                    </button>
+                </div>
+            </header>
+
+            <main class="content-area">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Patients</h1>
+                        <p>Manage all registered patients and their profiles</p>
+                    </div>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <input type="text" id="search-input" placeholder="Search patients by name or phone..." />
+                    </div>
+                    <select class="filter-select" id="gender-filter">
+                        <option value="">All Genders</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <button class="btn btn-outline btn-sm" onclick="loadPatients()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="23 4 23 10 17 10" />
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+
+                <!-- Patient Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">All Patients</div>
+                            <div class="card-subtitle" id="patient-count"></div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Age</th>
+                                        <th>Gender</th>
+                                        <th>Phone</th>
+                                        <th>Address</th>
+                                        <th>Registered</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patients-tbody">
+                                    <tr>
+                                        <td colspan="7" style="text-align:center;padding:32px;">
+                                            <div class="spinner" style="margin:0 auto;width:28px;height:28px;"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Profile Section (shown when viewing) -->
+                <div id="patient-profile-section" class="hidden" style="margin-top:24px;">
+                    <div class="profile-header" id="profile-header"></div>
+                    <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:20px;flex-wrap:wrap;">
+                        <!-- Info Card -->
+                        <div class="card" id="patient-info-card"></div>
+                        <!-- Timeline Card -->
+                        <div class="card" id="patient-timeline-card"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add / Edit Patient Modal -->
+    <div class="modal-overlay" id="patient-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Add New Patient</h3>
+                <button class="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="patient-form-error" class="error-message"></div>
+                <input type="hidden" id="patient-id" />
+                <div class="form-row mb-16">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input id="p-name" type="text" class="form-control" placeholder="Jane Doe" />
+                    </div>
+                    <div class="form-group">
+                        <label>Age *</label>
+                        <input id="p-age" type="number" class="form-control" placeholder="25" min="0" max="150" />
+                    </div>
+                </div>
+                <div class="form-row mb-16">
+                    <div class="form-group">
+                        <label>Gender *</label>
+                        <select id="p-gender" class="form-control">
+                            <option value="">Select</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone *</label>
+                        <input id="p-phone" type="tel" class="form-control" placeholder="03001234567" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input id="p-address" type="text" class="form-control" placeholder="House #, Street, City" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closePatientModal()">Cancel</button>
+                <button class="btn btn-primary" id="save-patient-btn" onclick="savePatient()">
+                    <span id="save-patient-text">Save Patient</span>
+                    <span id="save-patient-spinner" class="spinner-inline hidden"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal" style="max-width:420px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Delete</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete patient <strong id="delete-patient-name"></strong>?</p>
+                <p style="margin-top:8px;font-size:12px;color:var(--text-muted);">This action cannot be undone. All
+                    associated records remain in the database.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn btn-danger" id="confirm-delete-btn" onclick="confirmDelete()">Delete Patient</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script type="module">
+        import { requireAuth, logoutUser } from '../auth.js';
+        import {
+            getUnifiedPatients, addPatient, updatePatient, deletePatient, getPatient,
+            getPatientAppointments, getPatientPrescriptions, getUsersByRole
+        } from '../database.js';
+        import { showToast, setupSidebarToggle, formatDate, getInitials, statusBadge, capitalize, debounce } from '../assets/js/utils.js';
+
+        let allPatients = [];
+        let deleteId = null;
+        let userRole = '';
+
+        // ─── Nav templates ─────────────────────────────────────
+        const NAV = {
+            admin: `
+        <p class="nav-section-title">Overview</p>
+        <a href="admin-dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+        <p class="nav-section-title">Management</p>
+        <a href="patients.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Patients</a>
+        <a href="appointments.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Appointments</a>
+        <a href="prescriptions.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Prescriptions</a>`,
+            doctor: `
+        <p class="nav-section-title">Overview</p>
+        <a href="doctor-dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+        <p class="nav-section-title">Clinical</p>
+        <a href="appointments.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Appointments</a>
+        <a href="prescriptions.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Prescriptions</a>
+        <a href="patients.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Patients</a>`,
+            receptionist: `
+        <p class="nav-section-title">Overview</p>
+        <a href="receptionist-dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+        <p class="nav-section-title">Management</p>
+        <a href="patients.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Patients</a>
+        <a href="appointments.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Appointments</a>`
+        };
+
+        async function init() {
+            try {
+                const { profile } = await requireAuth(null);
+
+                // Block patients from staff-only management page
+                if (profile.role === 'patient') {
+                    window.location.href = 'patient-dashboard.html';
+                    return;
+                }
+
+                userRole = profile.role;
+                document.getElementById('sidebar-name').textContent = profile.name;
+                document.getElementById('sidebar-avatar').textContent = getInitials(profile.name);
+                document.getElementById('role-badge-el').textContent = capitalize(profile.role);
+                document.getElementById('role-badge-el').classList.add(profile.role);
+                document.getElementById('brand-role').textContent = capitalize(profile.role) + ' Portal';
+                document.getElementById('sidebar-nav').innerHTML = NAV[profile.role] || NAV.admin;
+
+                // Only admin & receptionist can add/edit/delete
+                if (profile.role === 'doctor') {
+                    document.getElementById('add-patient-btn').classList.add('hidden');
+                }
+
+                setupSidebarToggle();
+                document.getElementById('logout-btn').addEventListener('click', logoutUser);
+                await loadPatients();
+
+                // Search
+                document.getElementById('search-input').addEventListener('input', debounce(filterPatients, 300));
+                document.getElementById('gender-filter').addEventListener('change', filterPatients);
+            } catch (e) { }
+        }
+
+        window.loadPatients = async function () {
+            const tbody = document.getElementById('patients-tbody');
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;"><div class="spinner" style="margin:0 auto;width:28px;height:28px;"></div></td></tr>`;
+            try {
+                allPatients = await getUnifiedPatients();
+                document.getElementById('patient-count').textContent = `${allPatients.length} patient${allPatients.length !== 1 ? 's' : ''} registered`;
+                renderTable(allPatients);
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="7" style="color:var(--danger);text-align:center;padding:32px;">Failed to load patients</td></tr>`;
+            }
+        };
+
+        function renderTable(patients) {
+            const tbody = document.getElementById('patients-tbody');
+            const canEdit = userRole !== 'doctor';
+            if (!patients.length) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--text-muted);">No patients found</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = patients.map(p => `
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="user-avatar" style="width:34px;height:34px;font-size:12px;">${getInitials(p.name)}</div>
+              <div>
+                <div class="fw-600">${p.name}</div>
+                <div class="text-muted fs-12">#${p.id.slice(0, 6).toUpperCase()}</div>
+              </div>
+            </div>
+          </td>
+          <td>${p.age} yrs</td>
+          <td>${capitalize(p.gender)}</td>
+          <td>${p.phone}</td>
+          <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.address || '—'}</td>
+          <td>${formatDate(p.createdAt)}</td>
+          <td>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn btn-outline btn-sm" onclick="viewProfile('${p.id}')">Profile</button>
+              ${canEdit ? `
+                <button class="btn btn-primary btn-sm" onclick="editPatient('${p.id}')">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deletePatientConfirm('${p.id}','${p.name}')">Del</button>
+              ` : ''}
+            </div>
+          </td>
+        </tr>`).join('');
+        }
+
+        function filterPatients() {
+            const q = document.getElementById('search-input').value.toLowerCase();
+            const g = document.getElementById('gender-filter').value;
+            const filtered = allPatients.filter(p => {
+                const matchQ = !q || p.name.toLowerCase().includes(q) || (p.phone || '').includes(q);
+                const matchG = !g || p.gender === g;
+                return matchQ && matchG;
+            });
+            renderTable(filtered);
+        }
+
+        // ─── Add Patient ────────────────────────────────────────
+        window.openAddModal = function () {
+            document.getElementById('patient-id').value = '';
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-age').value = '';
+            document.getElementById('p-gender').value = '';
+            document.getElementById('p-phone').value = '';
+            document.getElementById('p-address').value = '';
+            document.getElementById('modal-title').textContent = 'Add New Patient';
+            document.getElementById('save-patient-text').textContent = 'Save Patient';
+            document.getElementById('patient-form-error').classList.remove('show');
+            document.getElementById('patient-modal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.editPatient = async function (id) {
+            try {
+                const p = await getPatient(id);
+                document.getElementById('patient-id').value = p.id;
+                document.getElementById('p-name').value = p.name;
+                document.getElementById('p-age').value = p.age;
+                document.getElementById('p-gender').value = p.gender;
+                document.getElementById('p-phone').value = p.phone;
+                document.getElementById('p-address').value = p.address || '';
+                document.getElementById('modal-title').textContent = 'Edit Patient';
+                document.getElementById('save-patient-text').textContent = 'Update Patient';
+                document.getElementById('patient-form-error').classList.remove('show');
+                document.getElementById('patient-modal').classList.add('open');
+                document.body.style.overflow = 'hidden';
+            } catch (e) { showToast('Unable to load patient record.', 'error'); }
+        };
+
+        window.closePatientModal = function () {
+            document.getElementById('patient-modal').classList.remove('open');
+            document.body.style.overflow = '';
+        };
+
+        window.savePatient = async function () {
+            const id = document.getElementById('patient-id').value;
+            const name = document.getElementById('p-name').value.trim();
+            const age = document.getElementById('p-age').value;
+            const gender = document.getElementById('p-gender').value;
+            const phone = document.getElementById('p-phone').value.trim();
+            const address = document.getElementById('p-address').value.trim();
+            const errEl = document.getElementById('patient-form-error');
+            errEl.classList.remove('show');
+
+            if (!name || !age || !gender || !phone) {
+                errEl.textContent = 'Name, age, gender and phone are required.';
+                errEl.classList.add('show'); return;
+            }
+
+            const btn = document.getElementById('save-patient-btn');
+            btn.disabled = true;
+            document.getElementById('save-patient-spinner').classList.remove('hidden');
+
+            const userId = sessionStorage.getItem('userId');
+            try {
+                const data = { name, age: parseInt(age), gender, phone, address, createdBy: userId };
+                if (id) {
+                    await updatePatient(id, data);
+                    showToast('Patient updated!', 'success');
+                } else {
+                    await addPatient(data);
+                    showToast('Patient added!', 'success');
+                }
+                window.closePatientModal();
+                await loadPatients();
+            } catch (e) {
+                errEl.textContent = 'Failed: ' + e.message;
+                errEl.classList.add('show');
+            } finally {
+                btn.disabled = false;
+                document.getElementById('save-patient-spinner').classList.add('hidden');
+            }
+        };
+
+        // ─── Delete ─────────────────────────────────────────────
+        window.deletePatientConfirm = function (id, name) {
+            deleteId = id;
+            document.getElementById('delete-patient-name').textContent = name;
+            document.getElementById('delete-modal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        };
+        window.closeDeleteModal = function () {
+            document.getElementById('delete-modal').classList.remove('open');
+            document.body.style.overflow = '';
+        };
+        window.confirmDelete = async function () {
+            if (!deleteId) return;
+            try {
+                await deletePatient(deleteId);
+                showToast('Patient deleted.', 'success');
+                closeDeleteModal();
+                await loadPatients();
+                document.getElementById('patient-profile-section').classList.add('hidden');
+            } catch (e) { showToast('Delete failed', 'error'); }
+        };
+
+        // ─── Patient Profile ─────────────────────────────────────
+        window.viewProfile = async function (id) {
+            const section = document.getElementById('patient-profile-section');
+            section.classList.remove('hidden');
+            section.scrollIntoView({ behavior: 'smooth' });
+
+            document.getElementById('profile-header').innerHTML = `<div class="spinner" style="margin:0 auto;"></div>`;
+            document.getElementById('patient-info-card').innerHTML = '';
+            document.getElementById('patient-timeline-card').innerHTML = '';
+
+            try {
+                const [p, appts, rxs, doctors] = await Promise.all([
+                    getPatient(id),
+                    getPatientAppointments(id),
+                    getPatientPrescriptions(id),
+                    getUsersByRole('doctor')
+                ]);
+                const docMap = Object.fromEntries(doctors.map(d => [d.id, d]));
+
+                // Profile header
+                document.getElementById('profile-header').innerHTML = `
+          <div class="profile-avatar">${getInitials(p.name)}</div>
+          <div class="profile-info">
+            <h2>${p.name}</h2>
+            <p>${p.gender ? capitalize(p.gender) : ''} · ${p.age} years old</p>
+            <div class="profile-meta">
+              <div class="profile-meta-item">Phone: ${p.phone}</div>
+              <div class="profile-meta-item">Address: ${p.address || 'N/A'}</div>
+              <div class="profile-meta-item">Registered: ${formatDate(p.createdAt)}</div>
+            </div>
+          </div>`;
+
+                // Info card
+                document.getElementById('patient-info-card').innerHTML = `
+          <div class="card-header"><div class="card-title">Patient Details</div></div>
+          <div class="card-body">
+            <div class="info-grid">
+              <div class="info-item"><div class="info-label">Patient ID</div><div class="info-value">#${p.id.slice(0, 8).toUpperCase()}</div></div>
+              <div class="info-item"><div class="info-label">Age</div><div class="info-value">${p.age} years</div></div>
+              <div class="info-item"><div class="info-label">Gender</div><div class="info-value">${capitalize(p.gender)}</div></div>
+              <div class="info-item"><div class="info-label">Phone</div><div class="info-value">${p.phone}</div></div>
+              <div class="info-item"><div class="info-label">Address</div><div class="info-value">${p.address || '—'}</div></div>
+              <div class="info-item"><div class="info-label">Appointments</div><div class="info-value">${appts.length}</div></div>
+              <div class="info-item"><div class="info-label">Prescriptions</div><div class="info-value">${rxs.length}</div></div>
+            </div>
+            ${rxs.length ? `
+              <div style="margin-top:16px;">
+                <div class="info-label mb-8">Latest Prescriptions</div>
+                ${rxs.slice(0, 3).map(rx => `
+                  <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;margin-bottom:8px;border-left:3px solid var(--secondary);">
+                    <div style="font-size:12px;font-weight:600;color:var(--text-secondary);">${formatDate(rx.createdAt)} · Dr. ${docMap[rx.doctorId]?.name || '—'}</div>
+                    <div style="margin-top:4px;">${(rx.medicines || []).map(m => `<span class="medicine-chip">${m.name}</span>`).join('')}</div>
+                    ${rx.pdfUrl ? `<a href="${rx.pdfUrl}" target="_blank" class="btn btn-success btn-sm" style="margin-top:6px;">↓ Download PDF</a>` : ''}
+                  </div>`).join('')}
+              </div>` : ''}
+          </div>`;
+
+                // Timeline
+                const timelineItems = [
+                    ...appts.map(a => ({ date: a.date, type: 'appointment', title: `Appointment – ${a.status}`, desc: `Doctor: Dr. ${docMap[a.doctorId]?.name || '—'}`, color: a.status === 'Completed' ? 'green' : '' })),
+                    ...rxs.map(rx => ({ dateTs: rx.createdAt, type: 'prescription', title: `Prescription issued`, desc: `${(rx.medicines || []).map(m => m.name).join(', ')}`, color: 'green' }))
+                ].sort((a, b) => {
+                    const da = a.date ? new Date(a.date) : (a.dateTs?.toDate?.() || new Date(0));
+                    const db2 = b.date ? new Date(b.date) : (b.dateTs?.toDate?.() || new Date(0));
+                    return db2 - da;
+                });
+
+                document.getElementById('patient-timeline-card').innerHTML = `
+          <div class="card-header"><div class="card-title">Medical Timeline</div><div class="card-subtitle">${timelineItems.length} events</div></div>
+          <div class="card-body" style="max-height:480px;overflow-y:auto;">
+            ${!timelineItems.length ? `<p style="text-align:center;color:var(--text-muted);padding:24px;">No history yet</p>` : `
+            <div class="timeline">
+              ${timelineItems.map(item => `
+                <div class="timeline-item">
+                  <div class="timeline-dot ${item.color}"></div>
+                  <div class="timeline-content">
+                    <div class="timeline-date">${item.date || formatDate(item.dateTs)} · ${item.type === 'appointment' ? 'Appointment' : 'Prescription'}</div>
+                    <div class="timeline-title">${item.title}</div>
+                    <div class="timeline-desc">${item.desc}</div>
+                  </div>
+                </div>`).join('')}
+            </div>`}
+          </div>`;
+            } catch (e) {
+                document.getElementById('profile-header').innerHTML = `<p style="color:var(--danger);font-weight:600;">Unable to load patient profile.</p>`;
+            }
+        };
+
+        init();
+
+        // Hide Loader
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loading');
+            setTimeout(() => {
+                loader.classList.add('hidden');
+            }, 600);
+        });
+    </script>
+</body>
+
+</html>

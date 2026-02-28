@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prescriptions – ClinicFlow</title>
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <!-- jsPDF CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+    <div id="loading" class="page-loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <svg viewBox="0 0 24 24" fill="white">
+                    <path
+                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                </svg>
+            </div>
+            <div class="loader-text">Clinic<span>Flow</span></div>
+            <div class="loader-spinner"></div>
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <div class="brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path
+                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                        </svg></div>
+                    <div class="brand-text">
+                        <h2>ClinicFlow</h2><span id="brand-role">Portal</span>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebar-avatar">--</div>
+                <div class="user-info">
+                    <div class="name" id="sidebar-name">Loading...</div>
+                    <div class="role-badge" id="role-badge-el">Role</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav" id="sidebar-nav"></nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" id="logout-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="topbar">
+                <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+                <h2 class="topbar-title">Prescriptions</h2>
+                <div class="topbar-actions">
+                    <button class="btn btn-primary btn-sm" id="new-rx-btn" onclick="openRxModal()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        New Prescription
+                    </button>
+                </div>
+            </header>
+
+            <main class="content-area">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Prescription Management</h1>
+                        <p>Write, manage and download prescriptions</p>
+                    </div>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <input type="text" id="search-input" placeholder="Search by patient name..." />
+                    </div>
+                    <button class="btn btn-outline btn-sm" onclick="loadPrescriptions()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="23 4 23 10 17 10" />
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+
+                <!-- Prescription Cards Grid -->
+                <div id="prescriptions-grid"
+                    style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;">
+                    <div style="text-align:center;padding:48px;grid-column:1/-1;">
+                        <div class="spinner" style="margin:0 auto;width:32px;height:32px;"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- New Prescription Modal -->
+    <div class="modal-overlay" id="rx-modal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 class="modal-title">Write Prescription</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="rx-form-error" class="error-message"></div>
+
+                <div class="form-row mb-16">
+                    <div class="form-group">
+                        <label>Patient *</label>
+                        <select id="rx-patient" class="form-control">
+                            <option value="">Select patient</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Doctor (Auto-filled)</label>
+                        <input id="rx-doctor-display" type="text" class="form-control" disabled />
+                    </div>
+                </div>
+
+                <!-- Medicines -->
+                <div style="margin-bottom:16px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                        <label
+                            style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.4px;">Medicines
+                            *</label>
+                        <button class="btn btn-secondary btn-sm" onclick="addMedicineRow()">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            Add Medicine
+                        </button>
+                    </div>
+                    <!-- Header -->
+                    <div
+                        style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;margin-bottom:6px;padding:0 10px;">
+                        <span style="font-size:11px;color:var(--text-muted);font-weight:600;">MEDICINE NAME</span>
+                        <span style="font-size:11px;color:var(--text-muted);font-weight:600;">DOSAGE</span>
+                        <span style="font-size:11px;color:var(--text-muted);font-weight:600;">DURATION</span>
+                        <span></span>
+                    </div>
+                    <div id="medicines-container"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Doctor's Notes</label>
+                    <textarea id="rx-notes" class="form-control"
+                        placeholder="Additional instructions, dietary advice, follow-up dates..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeRxModal()">Cancel</button>
+                <button class="btn btn-primary" id="save-rx-btn" onclick="savePrescription()">
+                    <span id="save-rx-text">Save & Generate PDF</span>
+                    <span id="save-rx-spinner" class="spinner-inline hidden"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script type="module">
+        import { requireAuth, logoutUser } from '../auth.js';
+        import { addPrescription, updatePrescription, getAllPrescriptions, getDoctorPrescriptions, getUnifiedPatients, getUsersByRole } from '../database.js';
+        import { uploadPdfToCloudinary, generatePrescriptionPDF } from '../app.js';
+        import { showToast, setupSidebarToggle, formatDate, getInitials, capitalize, debounce, showLoading, hideLoading } from '../assets/js/utils.js';
+
+        let allRxs = [], patients = [], doctors = [];
+        let userRole = '', userId = '';
+        let doctorProfile = null;
+
+        const NAV = {
+            admin: `<p class="nav-section-title">Overview</p><a href="admin-dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a><p class="nav-section-title">Management</p><a href="patients.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Patients</a><a href="appointments.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Appointments</a><a href="prescriptions.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Prescriptions</a>`,
+            doctor: `<p class="nav-section-title">Overview</p><a href="doctor-dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a><p class="nav-section-title">Clinical</p><a href="appointments.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Appointments</a><a href="prescriptions.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Prescriptions</a><a href="patients.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Patients</a>`,
+            receptionist: `<p class="nav-section-title">Overview</p><a href="receptionist-dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a><p class="nav-section-title">Management</p><a href="patients.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Patients</a><a href="appointments.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Appointments</a><a href="prescriptions.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>View Prescriptions</a>`
+        };
+
+        async function init() {
+            try {
+                const { profile, user } = await requireAuth(null);
+
+                // Block patients from global prescription management
+                if (profile.role === 'patient') {
+                    window.location.href = 'patient-dashboard.html';
+                    return;
+                }
+
+                userRole = profile.role;
+                userId = user.uid;
+                doctorProfile = profile;
+                document.getElementById('sidebar-name').textContent = profile.name;
+                document.getElementById('sidebar-avatar').textContent = getInitials(profile.name);
+                document.getElementById('role-badge-el').textContent = capitalize(profile.role);
+                document.getElementById('role-badge-el').classList.add(profile.role);
+                document.getElementById('brand-role').textContent = capitalize(profile.role) + ' Portal';
+                document.getElementById('sidebar-nav').innerHTML = NAV[profile.role] || NAV.admin;
+                const docDisplay = document.getElementById('rx-doctor-display');
+                if (docDisplay) docDisplay.value = 'Dr. ' + profile.name;
+
+                // Only doctors can write prescriptions
+                if (profile.role !== 'doctor' && profile.role !== 'admin') {
+                    const newBtn = document.getElementById('new-rx-btn');
+                    if (newBtn) newBtn.classList.add('hidden');
+                }
+
+                setupSidebarToggle();
+                document.getElementById('logout-btn').addEventListener('click', logoutUser);
+
+                await reload();
+                document.getElementById('search-input').addEventListener('input', debounce(filterRxs, 300));
+            } catch (e) {
+                console.error("Prescription Portal Error:", e);
+                showToast("Operational Failure during Initialization.", "error");
+            }
+        }
+
+        window.reload = async function () {
+            try {
+                [patients, doctors] = await Promise.all([getUnifiedPatients(), getUsersByRole('doctor')]);
+
+                // Populate patient select
+                const ps = document.getElementById('rx-patient');
+                if (ps) {
+                    ps.innerHTML = `<option value="">Select patient</option>` + patients.map(p => `<option value="${p.id}">${p.name} (${p.age || '?'}y, ${capitalize(p.gender || '?')})</option>`).join('');
+                }
+
+                await loadPrescriptions();
+            } catch (e) {
+                showToast("Refresh data failed.", "error");
+            }
+        }
+
+        window.loadPrescriptions = async function () {
+            const grid = document.getElementById('prescriptions-grid');
+            grid.innerHTML = `<div style="text-align:center;padding:48px;grid-column:1/-1;"><div class="spinner" style="margin:0 auto;width:32px;height:32px;"></div></div>`;
+            try {
+                if (userRole === 'doctor') {
+                    allRxs = await getDoctorPrescriptions(userId);
+                } else {
+                    allRxs = await getAllPrescriptions();
+                }
+                renderCards(allRxs);
+            } catch (e) {
+                grid.innerHTML = `<div style="color:var(--danger);text-align:center;padding:48px;grid-column:1/-1;">
+                    <div style="font-size:16px;font-weight:700;">Unable to load prescriptions</div>
+                    <div style="font-size:13px;opacity:0.7;margin-top:4px;">${e.message || 'Please check your connection.'}</div>
+                </div>`;
+            }
+        };
+
+        function renderCards(rxs) {
+            const grid = document.getElementById('prescriptions-grid');
+            const patMap = Object.fromEntries(patients.map(p => [p.id, p]));
+            const docMap = Object.fromEntries(doctors.map(d => [d.id, d]));
+
+            if (!rxs.length) {
+                grid.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:64px 20px;">
+            <div style="width:64px;height:64px;background:var(--surface2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <h3 style="color:var(--text-secondary);">No prescriptions found</h3>
+            <p style="color:var(--text-muted);font-size:13px;margin-top:6px;">Prescriptions written by doctors will appear here</p>
+          </div>`;
+                return;
+            }
+            grid.innerHTML = rxs.map(rx => {
+                const pat = patMap[rx.patientId];
+                const doc = docMap[rx.doctorId];
+                return `
+          <div class="card prescription-card" style="animation:slideUp .3s ease;">
+            <div class="card-body">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                <div class="user-avatar" style="width:40px;height:40px;">${getInitials(pat?.name || '?')}</div>
+                <div>
+                  <div class="fw-600" style="font-size:14px;">${pat?.name || 'Unknown'}</div>
+                  <div class="text-muted fs-12">${pat?.age || '?'} yrs · ${capitalize(pat?.gender || '')}</div>
+                </div>
+                <div style="margin-left:auto;font-size:11px;color:var(--text-muted);">${formatDate(rx.createdAt)}</div>
+              </div>
+
+              <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;margin-bottom:12px;">
+                <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;">Medicines</div>
+                ${(rx.medicines || []).map(m => `
+                  <div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--border-light);">
+                    <strong>${m.name}</strong>
+                    <span style="color:var(--text-secondary);">${m.dosage} · ${m.duration}</span>
+                  </div>`).join('')}
+              </div>
+
+              ${rx.notes ? `<div style="font-size:12px;color:var(--text-secondary);background:var(--primary-light);padding:8px 12px;border-radius:8px;margin-bottom:12px;border-left:3px solid var(--primary);"><strong>Notes:</strong> ${rx.notes}</div>` : ''}
+
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:12px;color:var(--text-muted);">Dr. ${doc?.name || '—'}</span>
+                <div style="display:flex;gap:8px;">
+                  <button class="btn btn-outline btn-sm" onclick="regenPDF('${rx.id}')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                    Generate
+                  </button>
+                  ${rx.pdfUrl ? `<a href="${rx.pdfUrl}" target="_blank" class="btn btn-success btn-sm">↓ PDF</a>` : ''}
+                </div>
+              </div>
+            </div>
+          </div>`;
+            }).join('');
+        }
+
+        function filterRxs() {
+            const q = document.getElementById('search-input').value.toLowerCase();
+            const patMap = Object.fromEntries(patients.map(p => [p.id, p]));
+            const filtered = allRxs.filter(rx => !q || (patMap[rx.patientId]?.name || '').toLowerCase().includes(q));
+            renderCards(filtered);
+        }
+
+        // ─── Medicine Rows ───────────────────────────────────────
+        let medCount = 0;
+        window.addMedicineRow = function () {
+            const id = ++medCount;
+            const container = document.getElementById('medicines-container');
+            const row = document.createElement('div');
+            row.className = 'medicine-row';
+            row.id = `med-row-${id}`;
+            row.innerHTML = `
+        <input type="text"   class="form-control med-name"     placeholder="e.g. Paracetamol" />
+        <input type="text"   class="form-control med-dosage"   placeholder="e.g. 500mg" />
+        <input type="text"   class="form-control med-duration" placeholder="e.g. 5 days" />
+        <button class="btn-remove" onclick="removeMedRow(${id})" title="Remove">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>`;
+            container.appendChild(row);
+        };
+
+        window.removeMedRow = function (id) {
+            const el = document.getElementById(`med-row-${id}`);
+            if (el) el.remove();
+        };
+
+        // ─── Open/Close Rx Modal ─────────────────────────────────
+        window.openRxModal = function () {
+            document.getElementById('medicines-container').innerHTML = '';
+            medCount = 0;
+            document.getElementById('rx-notes').value = '';
+            document.getElementById('rx-patient').value = '';
+            document.getElementById('rx-form-error').classList.remove('show');
+            addMedicineRow(); // Start with one row
+            document.getElementById('rx-modal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        };
+        window.closeRxModal = function () {
+            document.getElementById('rx-modal').classList.remove('open');
+            document.body.style.overflow = '';
+        };
+
+        // ─── Save Prescription + Generate PDF + Upload ───────────
+        window.savePrescription = async function () {
+            const patId = document.getElementById('rx-patient').value;
+            const notes = document.getElementById('rx-notes').value.trim();
+            const errEl = document.getElementById('rx-form-error');
+            errEl.classList.remove('show');
+
+            // Collect medicines
+            const rows = document.querySelectorAll('.medicine-row');
+            const medicines = [];
+            rows.forEach(row => {
+                const name = row.querySelector('.med-name').value.trim();
+                const dosage = row.querySelector('.med-dosage').value.trim();
+                const duration = row.querySelector('.med-duration').value.trim();
+                if (name) medicines.push({ name, dosage, duration });
+            });
+
+            if (!patId) { errEl.textContent = 'Please select a patient.'; errEl.classList.add('show'); return; }
+            if (!medicines.length) { errEl.textContent = 'Add at least one medicine.'; errEl.classList.add('show'); return; }
+
+            const btn = document.getElementById('save-rx-btn');
+            btn.disabled = true;
+            document.getElementById('save-rx-spinner').classList.remove('hidden');
+            document.getElementById('save-rx-text').textContent = 'Saving...';
+
+            try {
+                const patMap = Object.fromEntries(patients.map(p => [p.id, p]));
+                const patient = patMap[patId];
+
+                // 1. Save to Firestore first (no pdfUrl yet)
+                const rxData = {
+                    patientId: patId,
+                    doctorId: userId,
+                    medicines,
+                    notes,
+                    pdfUrl: ''
+                };
+                const docRef = await addPrescription(rxData);
+
+                // 2. Generate PDF (jsPDF)
+                document.getElementById('save-rx-text').textContent = 'Generating PDF...';
+                const fakePrescription = { ...rxData, id: docRef.id, createdAt: { toDate: () => new Date() } };
+                const pdfBlob = generatePrescriptionPDF(fakePrescription, patient, doctorProfile);
+
+                // 3. Upload to Cloudinary
+                document.getElementById('save-rx-text').textContent = 'Uploading PDF...';
+                const fileName = `rx_${patient.name.replace(/\s/g, '_')}_${Date.now()}.pdf`;
+                let pdfUrl = '';
+                try {
+                    pdfUrl = await uploadPdfToCloudinary(pdfBlob, fileName);
+                } catch (uploadErr) {
+                    // PDF still downloaded locally even if upload fails
+                    showToast('PDF upload failed – downloading locally instead.', 'warning');
+                    const url = URL.createObjectURL(pdfBlob);
+                    const a = document.createElement('a'); a.href = url; a.download = fileName; a.click();
+                    URL.revokeObjectURL(url);
+                }
+
+                // 4. Update Firestore with pdfUrl
+                if (pdfUrl) {
+                    await updatePrescription(docRef.id, { pdfUrl });
+                    showToast('Prescription saved & PDF uploaded!', 'success');
+                } else {
+                    showToast('Prescription saved! (PDF stored locally)', 'success');
+                }
+
+                closeRxModal();
+                await loadPrescriptions();
+            } catch (e) {
+                errEl.textContent = 'Error: ' + e.message;
+                errEl.classList.add('show');
+            } finally {
+                btn.disabled = false;
+                document.getElementById('save-rx-spinner').classList.add('hidden');
+                document.getElementById('save-rx-text').textContent = 'Save & Generate PDF';
+            }
+        };
+
+        // ─── Regenerate PDF for existing prescription ────────────
+        window.regenPDF = async function (rxId) {
+            const rx = allRxs.find(r => r.id === rxId);
+            if (!rx) return showToast('Prescription not found', 'error');
+            const patMap = Object.fromEntries(patients.map(p => [p.id, p]));
+            const docMap = Object.fromEntries(doctors.map(d => [d.id, d]));
+            const patient = patMap[rx.patientId];
+            const doctor = docMap[rx.doctorId] || doctorProfile;
+
+            showLoading('Generating PDF...');
+            try {
+                const blob = generatePrescriptionPDF(rx, patient || { name: 'Patient' }, doctor || { name: 'Doctor' });
+                const fileName = `rx_${(patient?.name || 'patient').replace(/\s/g, '_')}_${Date.now()}.pdf`;
+                try {
+                    const url2 = await uploadPdfToCloudinary(blob, fileName);
+                    await updatePrescription(rxId, { pdfUrl: url2 });
+                    showToast('PDF regenerated and uploaded!', 'success');
+                    await loadPrescriptions();
+                } catch (e2) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a'); a.href = url; a.download = fileName; a.click();
+                    URL.revokeObjectURL(url);
+                    showToast('PDF downloaded locally.', 'success');
+                }
+            } catch (e) {
+                showToast('PDF generation failed: ' + e.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        };
+
+        init();
+
+        // Hide Loader
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loading');
+            setTimeout(() => {
+                loader.classList.add('hidden');
+            }, 600);
+        });
+    </script>
+</body>
+
+</html>

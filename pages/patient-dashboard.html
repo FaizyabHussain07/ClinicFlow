@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard | ClinicFlow</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+
+<body>
+    <!-- Page Loader -->
+    <div id="loading" class="page-loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                </svg>
+            </div>
+            <div class="loader-spinner"></div>
+            <div class="loader-text">Securing Portal<span>Flow</span></div>
+        </div>
+    </div>
+
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <div class="brand-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <h2>ClinicFlow</h2>
+                        <span>Health System</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebar-avatar">PT</div>
+                <div class="user-info">
+                    <div class="name" id="sidebar-name">Loading...</div>
+                    <div class="role-badge doctor">PATIENT</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <p class="nav-section-title">Record Management</p>
+                <a href="#" class="nav-item active" onclick="switchTab('tab-new-case', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    Submit Disease Form
+                </a>
+                <a href="#" class="nav-item" onclick="switchTab('tab-history', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                    My Disease History
+                </a>
+                <a href="#" class="nav-item" onclick="switchTab('tab-appts', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    My Appointments
+                </a>
+                <a href="#" class="nav-item" onclick="switchTab('tab-rx', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                    </svg>
+                    Medical Prescriptions
+                </a>
+                <a href="#" class="nav-item" onclick="switchTab('tab-profile', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    Account Settings
+                </a>
+                <div style="flex:1"></div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-logout" id="logout-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Sign Out
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+                <div class="topbar-title" id="welcome-msg">Dashboard</div>
+                <div class="topbar-actions">
+                    <span id="topbar-date" style="font-size:12px; font-weight:600; color:var(--text-secondary)"></span>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- 1. Submit Disease Form -->
+                <div id="tab-new-case" class="tab-content">
+                    <div class="page-header">
+                        <div class="page-header-left">
+                            <h1>Medical Case Submission</h1>
+                            <p>Describe your symptoms to request an appointment.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Current Age</label>
+                                    <input type="number" id="df-age" class="form-control" placeholder="Years">
+                                </div>
+                                <div class="form-group">
+                                    <label>Gender Selection</label>
+                                    <select id="df-gender" class="form-control">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group mt-16" style="margin-top:16px;">
+                                <label>Contact Phone Number</label>
+                                <input type="tel" id="df-phone" class="form-control" placeholder="+92 300 1234567">
+                            </div>
+                            <div class="form-group mt-16" style="margin-top:16px;">
+                                <label>Describe Your Symptoms</label>
+                                <textarea id="df-symptoms" class="form-control"
+                                    placeholder="Feeling feverish, coughing, headache since 2 days..."></textarea>
+                            </div>
+                            <div class="form-group mt-16" style="margin-top:16px;">
+                                <label>Additional Medical Notes (Allergies, Previous History)</label>
+                                <textarea id="df-notes" class="form-control"
+                                    placeholder="Optional background info..."></textarea>
+                            </div>
+
+                            <div id="df-error" class="error-message mt-16"></div>
+
+                            <button class="btn btn-primary btn-lg mt-24" style="margin-top:24px;" id="btn-submit-df"
+                                onclick="submitCase()">
+                                <span id="submit-df-text">Create Medical Case</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Disease History -->
+                <div id="tab-history" class="tab-content" style="display:none;">
+                    <div class="page-header">
+                        <div class="page-header-left">
+                            <h1>My Medical Cases</h1>
+                            <p>Overview of all health concerns you have reported.</p>
+                        </div>
+                        <div class="page-header-right">
+                            <button class="btn-refresh" onclick="reloadAllData()" title="Sync Records">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 4v6h-6" />
+                                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date Reported</th>
+                                            <th>Symptoms Summary</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="history-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Appointments -->
+                <div id="tab-appts" class="tab-content" style="display:none;">
+                    <div class="page-header">
+                        <div class="page-header-left">
+                            <h1>Clinic Visits</h1>
+                            <p>Scheduled appointments for your medical cases.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Doctor Name</th>
+                                            <th>Scheduled On</th>
+                                            <th>Time Slot</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="appts-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Prescriptions -->
+                <div id="tab-rx" class="tab-content" style="display:none;">
+                    <div class="page-header">
+                        <div class="page-header-left">
+                            <h1>Digital Prescriptions</h1>
+                            <p>Download and view your medicine charts issued by doctors.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Issuing Doctor</th>
+                                            <th>Issue Date</th>
+                                            <th>Medicine Count</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rx-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-profile" class="tab-content" style="display:none;">
+                    <div class="page-header">
+                        <div class="page-header-left">
+                            <h1>My Clinical Profile</h1>
+                            <p>Internal clinic account details.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="profile-view">
+                                <div class="profile-sidebar">
+                                    <div class="profile-avatar-large" id="prof-avatar">?</div>
+                                    <h2 id="prof-name">—</h2>
+                                    <p class="text-secondary" id="prof-role-sub">Patient Access</p>
+                                </div>
+                                <div class="profile-info">
+                                    <div class="card" style="margin-bottom:0">
+                                        <div class="card-header">
+                                            <div class="card-title">Discovery Details</div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div style="margin-bottom:20px;"><label
+                                                    style="font-size:12px; font-weight:700; color:var(--text-muted)">SYSTEM
+                                                    UID</label>
+                                                <p id="prof-id" style="font-weight:600; margin-top:4px;">—</p>
+                                            </div>
+                                            <div style="margin-bottom:20px;"><label
+                                                    style="font-size:12px; font-weight:700; color:var(--text-muted)">EMAIL
+                                                    ADDRESS</label>
+                                                <p id="prof-email" style="font-weight:600; margin-top:4px;">—</p>
+                                            </div>
+                                            <div style="margin-bottom:20px;"><label
+                                                    style="font-size:12px; font-weight:700; color:var(--text-muted)">JOINED
+                                                    SINCE</label>
+                                                <p id="prof-joined" style="font-weight:600; margin-top:4px;">—</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Overlay for mobile sidebar toggling if the main.css handles it -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+    <div class="toast-container" id="toast-container"></div>
+
+    <script type="module">
+        import { requireAuth, logoutUser } from '../auth.js';
+        import { addDiseaseForm, getPatientDiseaseForms, getPatientAppointments, getPatientPrescriptions, getUsersByRole } from '../database.js';
+        import { getInitials, formatDate, setupSidebarToggle, showToast } from '../assets/js/utils.js';
+
+        let profile, userId;
+
+        async function init() {
+            try {
+                const res = await requireAuth('patient');
+                profile = res.profile;
+                userId = res.user.uid;
+
+                document.getElementById('sidebar-name').textContent = profile.name;
+                document.getElementById('sidebar-avatar').textContent = getInitials(profile.name);
+                document.getElementById('welcome-msg').textContent = `Hello, ${profile.name.split(' ')[0]}`;
+                document.getElementById('topbar-date').textContent = new Date().toLocaleDateString();
+
+                setupSidebarToggle();
+                document.getElementById('logout-btn').addEventListener('click', logoutUser);
+
+                await reloadAllData();
+                loadProfile();
+            } catch (e) { console.error(e); }
+        }
+
+        function loadProfile() {
+            if (!profile) return;
+            document.getElementById('prof-name').textContent = profile.name;
+            document.getElementById('prof-avatar').textContent = getInitials(profile.name);
+            document.getElementById('prof-id').textContent = userId;
+            document.getElementById('prof-email').textContent = profile.email;
+            document.getElementById('prof-joined').textContent = formatDate(profile.createdAt);
+        }
+
+        async function reloadAllData() {
+            const btn = document.querySelector('.btn-refresh');
+            if (btn) btn.classList.add('loading');
+            try {
+                await Promise.all([loadHistory(), loadAppointments(), loadPrescriptions()]);
+            } catch (e) { } finally {
+                if (btn) btn.classList.remove('loading');
+            }
+        }
+
+        window.submitCase = async () => {
+            const age = document.getElementById('df-age').value;
+            const gender = document.getElementById('df-gender').value;
+            const phone = document.getElementById('df-phone').value.trim();
+            const symptoms = document.getElementById('df-symptoms').value.trim();
+            const notes = document.getElementById('df-notes').value.trim();
+            const errEl = document.getElementById('df-error');
+            errEl.classList.remove('show');
+
+            if (!age || !phone || !symptoms) {
+                errEl.textContent = 'Please provide your age, phone number, and a description of symptoms.';
+                errEl.classList.add('show'); return;
+            }
+
+            const btn = document.getElementById('btn-submit-df');
+            btn.disabled = true;
+            document.getElementById('submit-df-text').textContent = 'Processing...';
+
+            try {
+                await addDiseaseForm({
+                    patientId: userId,
+                    patientName: profile.name,
+                    age, gender, phone, symptoms, notes
+                });
+                showToast('Your medical case has been submitted and will be reviewed shortly.', 'success');
+                // Clear and switch
+                document.getElementById('df-age').value = '';
+                document.getElementById('df-phone').value = '';
+                document.getElementById('df-symptoms').value = '';
+                document.getElementById('df-notes').value = '';
+                await loadHistory();
+                switchTab('tab-history', document.querySelector('[onclick*="tab-history"]'));
+            } catch (e) {
+                errEl.textContent = 'Could not submit case: ' + e.message;
+                errEl.classList.add('show');
+            } finally {
+                btn.disabled = false;
+                document.getElementById('submit-df-text').textContent = 'Create Medical Case';
+            }
+        };
+
+        async function loadHistory() {
+            const tbody = document.getElementById('history-body');
+            try {
+                const forms = await getPatientDiseaseForms(userId);
+                if (!forms.length) {
+                    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;padding:32px;color:var(--text-muted)">No reports submitted yet.</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = forms.map(f => `
+                    <tr>
+                        <td><strong>${formatDate(f.createdAt)}</strong></td>
+                        <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${f.symptoms}</td>
+                        <td><span class="status-badge status-${f.status.toLowerCase()}">${f.status}</span></td>
+                    </tr>
+                `).join('');
+            } catch (e) { tbody.innerHTML = `<tr><td colspan="3">Loading failed.</td></tr>`; }
+        }
+
+        async function loadAppointments() {
+            const tbody = document.getElementById('appts-body');
+            try {
+                const appts = await getPatientAppointments(userId);
+                const docs = await getUsersByRole('doctor');
+                const docMap = Object.fromEntries(docs.map(d => [d.id, d]));
+
+                if (!appts.length) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:32px;color:var(--text-muted)">No upcoming appointments found.</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = appts.map(a => `
+                    <tr>
+                        <td>Dr. ${docMap[a.doctorId]?.name || 'Attending Physician'}</td>
+                        <td>${a.date}</td>
+                        <td>${a.time || 'TBD'}</td>
+                        <td><span class="status-badge status-${a.status.toLowerCase()}">${a.status}</span></td>
+                    </tr>
+                `).join('');
+            } catch (e) { tbody.innerHTML = `<tr><td colspan="4">Loading failed.</td></tr>`; }
+        }
+
+        async function loadPrescriptions() {
+            const tbody = document.getElementById('rx-body');
+            try {
+                const results = await getPatientPrescriptions(userId);
+                const docs = await getUsersByRole('doctor');
+                const docMap = Object.fromEntries(docs.map(d => [d.id, d]));
+
+                if (!results.length) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:32px;color:var(--text-muted)">No prescriptions found.</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = results.map(r => `
+                    <tr>
+                        <td>Dr. ${docMap[r.doctorId]?.name || 'Staff Doctor'}</td>
+                        <td>${formatDate(r.createdAt)}</td>
+                        <td>${(r.medicines || []).length} Medicines</td>
+                        <td>
+                            <a href="${r.pdfUrl || '#'}" target="_blank" class="btn btn-outline btn-sm" ${!r.pdfUrl ? 'disabled' : ''}>View Digital Chart</a>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { tbody.innerHTML = `<tr><td colspan="4">Loading failed.</td></tr>`; }
+        }
+
+        window.switchTab = (id, btn) => {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            btn.classList.add('active');
+        };
+
+        init();
+        window.addEventListener('load', () => setTimeout(() => document.getElementById('loading').classList.add('hidden'), 500));
+    </script>
+</body>
+
+</html>

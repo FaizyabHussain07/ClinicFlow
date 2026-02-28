@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard | ClinicFlow</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+    <!-- Page Loader -->
+    <div id="loading" class="page-loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                </svg>
+            </div>
+            <div class="loader-spinner"></div>
+            <div class="loader-text">Initializing Clinical<span>Flow</span></div>
+        </div>
+    </div>
+
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <div class="brand-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <h2>ClinicFlow</h2>
+                        <span>Medical System</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebar-avatar">DR</div>
+                <div class="user-info">
+                    <div class="name" id="sidebar-name">Loading Profile...</div>
+                    <div class="role-badge doctor">LICENSED DOCTOR</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <p class="nav-section-title">Clinical Workflow</p>
+                <a href="doctor-dashboard.html" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    Current Consultations
+                </a>
+                <a href="prescriptions.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                    Prescription Archive
+                </a>
+                <a href="patients.html" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    Patient Directory
+                </a>
+                <a href="#" class="nav-item" id="nav-profile-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="8.5" cy="7" r="4" />
+                        <path d="M18 8l2 2 4-4" />
+                    </svg>
+                    Account Profile
+                </a>
+                <div style="flex:1"></div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-logout" id="logout-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Log Out
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+                <div class="topbar-title" id="welcome-msg">Doctor Portal</div>
+                <div class="topbar-actions">
+                    <span id="topbar-date" style="font-size:12px; font-weight:600; color:var(--text-secondary)"></span>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div id="consultations-view">
+                    <div class="page-header">
+                        <div class="page-header-left">
+                            <h1>Scheduled Consultations</h1>
+                            <p>Showing patients waiting for examination today.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Patient Queue</div>
+                            <div class="header-actions">
+                                <button class="btn-refresh" onclick="reload()" title="Refresh List">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M23 4v6h-6" />
+                                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Patient Full Name</th>
+                                            <th>Issue / Complain</th>
+                                            <th>Age / Gender</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="appts-tbody">
+                                        <tr>
+                                            <td colspan="4" style="text-align:center;padding:48px;">
+                                                <div class="spinner" style="margin:0 auto"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-profile" style="display:none;">
+                    <div class="page-header">
+                        <div class="page-header-left">
+                            <h1>Medical Profile</h1>
+                            <p>Account credentials and clinical ID.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="profile-view">
+                                <div class="profile-sidebar">
+                                    <div class="profile-avatar-large" id="prof-avatar">D</div>
+                                    <h2 id="prof-name">—</h2>
+                                    <p class="text-secondary">Certified Practitioner</p>
+                                </div>
+                                <div class="profile-info">
+                                    <div class="card" style="margin-bottom:0">
+                                        <div class="card-header">
+                                            <div class="card-title">Account Details</div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div style="margin-bottom:20px;"><label
+                                                    style="font-size:12px; font-weight:700; color:var(--text-muted)">STAFF
+                                                    UID</label>
+                                                <p id="prof-id" style="font-weight:600; margin-top:4px;">—</p>
+                                            </div>
+                                            <div style="margin-bottom:20px;"><label
+                                                    style="font-size:12px; font-weight:700; color:var(--text-muted)">EMAIL</label>
+                                                <p id="prof-email" style="font-weight:600; margin-top:4px;">—</p>
+                                            </div>
+                                            <div style="margin-bottom:20px;"><label
+                                                    style="font-size:12px; font-weight:700; color:var(--text-muted)">JOINED</label>
+                                                <p id="prof-joined" style="font-weight:600; margin-top:4px;">—</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Examination / Prescription Modal -->
+    <div id="rx-modal-overlay" class="modal-overlay">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <div class="modal-title">Clinical Examination & Rx</div>
+                <div class="modal-close" onclick="closeRxModal()"><svg width="20" height="20" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg></div>
+            </div>
+            <div class="modal-body">
+                <div id="case-background"
+                    style="margin-bottom:24px; padding:16px; background:var(--surface2); border-radius:var(--radius); border-left:5px solid var(--primary);">
+                </div>
+
+                <h3
+                    style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">
+                    Medicines & Medication Chart</h3>
+                <div id="prescription-container">
+                    <div class="medicine-row">
+                        <input type="text" placeholder="Medicine (e.g. Panadol)" class="form-control med-name">
+                        <input type="text" placeholder="Dosage (e.g. 1-0-1)" class="form-control med-dosage">
+                        <input type="text" placeholder="Duration (e.g. 5 Days)" class="form-control med-duration">
+                        <button class="btn-remove" onclick="this.parentElement.remove()">×</button>
+                    </div>
+                </div>
+                <button class="btn btn-outline btn-sm mt-12" onclick="addNewMedicineRow()" style="margin-top:12px;">+
+                    Add Medication</button>
+
+                <div class="form-group mt-20" style="margin-top:20px;">
+                    <label>Dietary & General Instructions</label>
+                    <textarea id="rx-instructions" class="form-control"
+                        placeholder="Avoid cold water, bed rest for 2 days..."></textarea>
+                </div>
+                <div id="rx-error" class="error-message mt-16"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeRxModal()">Discard</button>
+                <button class="btn btn-primary" id="btn-save-rx" onclick="savePrescription()">Finalize & Upload
+                    Record</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script type="module">
+        import { requireAuth, logoutUser } from '../auth.js';
+        import { getDoctorAppointments, getAllDiseaseForms, addPrescription } from '../database.js';
+        import { getInitials, formatDate, showToast, setupSidebarToggle, generatePrescriptionPDF, uploadPdfToCloudinary } from '../assets/js/utils.js';
+
+        let profile, userId, allAppts = [], allCases = [], currentAppt = null;
+
+        async function init() {
+            try {
+                const res = await requireAuth('doctor');
+                profile = res.profile;
+                userId = res.user.uid;
+
+                document.getElementById('sidebar-name').textContent = profile.name;
+                document.getElementById('sidebar-avatar').textContent = getInitials(profile.name);
+                document.getElementById('welcome-msg').textContent = `Dr. ${profile.name}`;
+                document.getElementById('topbar-date').textContent = new Date().toDateString();
+
+                setupSidebarToggle();
+                document.getElementById('logout-btn').addEventListener('click', logoutUser);
+
+                await reload();
+                loadProfile();
+
+                // Tab switching
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        if (item.id === 'nav-profile-link') {
+                            e.preventDefault();
+                            document.querySelectorAll('.tab-content, #tab-profile, #consultations-view').forEach(t => t.style.display = 'none');
+                            document.getElementById('tab-profile').style.display = 'block';
+                            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                            item.classList.add('active');
+                        }
+                    });
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        function loadProfile() {
+            if (!profile) return;
+            document.getElementById('prof-name').textContent = profile.name;
+            document.getElementById('prof-id').textContent = userId;
+            document.getElementById('prof-email').textContent = profile.email;
+            document.getElementById('prof-joined').textContent = formatDate(profile.createdAt);
+            document.getElementById('prof-avatar').textContent = getInitials(profile.name);
+        }
+
+        async function reload() {
+            [allAppts, allCases] = await Promise.all([
+                getDoctorAppointments(userId),
+                getAllDiseaseForms()
+            ]);
+            renderAppts();
+        }
+
+        function renderAppts() {
+            const tbody = document.getElementById('appts-body');
+            const pending = allAppts.filter(a => a.status === 'Confirmed' || a.status === 'Pending');
+
+            if (!pending.length) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:48px;color:var(--text-muted);">No consultations found in your queue today.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = pending.map(a => {
+                const caseInfo = allCases.find(c => c.id === a.diseaseFormId);
+                return `
+                <tr>
+                    <td><strong>${caseInfo?.patientName || 'Anonymous Patient'}</strong></td>
+                    <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${caseInfo?.symptoms || 'No records provided'}</td>
+                    <td>${caseInfo?.age || '?'} / ${caseInfo?.gender || '?'}</td>
+                    <td><button class="btn btn-primary btn-sm" onclick="openExaminationModal('${a.id}')">Start Exam</button></td>
+                </tr>`;
+            }).join('');
+        }
+
+        window.openExaminationModal = (apptId) => {
+            currentAppt = allAppts.find(a => a.id === apptId);
+            const caseInfo = allCases.find(c => c.id === currentAppt.diseaseFormId);
+
+            document.getElementById('case-background').innerHTML = `
+                <h4 style="font-size:14px; margin-bottom:6px;">Patient Complaint: ${caseInfo?.symptoms}</h4>
+                <div style="font-size:12px; opacity:0.8;">Background: ${caseInfo?.notes || 'No specific history logged.'}</div>
+                <div style="font-size:11px; margin-top:8px; color:var(--primary); font-weight:700;">Recorded ${formatDate(caseInfo?.createdAt)}</div>
+            `;
+            document.getElementById('rx-modal-overlay').classList.add('open');
+        };
+
+        window.closeRxModal = () => document.getElementById('rx-modal-overlay').classList.remove('open');
+
+        window.addNewMedicineRow = () => {
+            const row = document.createElement('div');
+            row.className = 'medicine-row';
+            row.innerHTML = `
+                <input type="text" placeholder="Medicine" class="form-control med-name">
+                <input type="text" placeholder="Dosage" class="form-control med-dosage">
+                <input type="text" placeholder="Duration" class="form-control med-duration">
+                <button class="btn-remove" onclick="this.parentElement.remove()">×</button>
+            `;
+            document.getElementById('prescription-container').appendChild(row);
+        };
+
+        window.savePrescription = async () => {
+            const meds = [];
+            document.querySelectorAll('.medicine-row').forEach(row => {
+                const name = row.querySelector('.med-name').value.trim();
+                const dosage = row.querySelector('.med-dosage').value.trim();
+                const dur = row.querySelector('.med-duration').value.trim();
+                if (name) meds.push({ name, dosage, duration: dur });
+            });
+
+            const instructions = document.getElementById('rx_instructions')?.value || document.getElementById('rx-instructions')?.value || '';
+            if (!meds.length) { showToast('Please prescribe at least one medicine.', 'error'); return; }
+
+            const btn = document.getElementById('btn-save-rx');
+            const errEl = document.getElementById('rx-error');
+            btn.disabled = true;
+            errEl.classList.remove('show');
+
+            try {
+                const caseInfo = allCases.find(c => c.id === currentAppt.diseaseFormId);
+                const rxData = {
+                    patientId: currentAppt.patientId,
+                    patientName: caseInfo.patientName,
+                    doctorId: userId,
+                    doctorName: profile.name,
+                    appointmentId: currentAppt.id,
+                    diseaseFormId: currentAppt.diseaseFormId,
+                    medicines: meds,
+                    instructions,
+                    createdAt: { toDate: () => new Date() }
+                };
+
+                // Generate PDF (Utility handles jsPDF)
+                const pdfBlob = generatePrescriptionPDF(rxData, { name: caseInfo.patientName, age: caseInfo.age, gender: caseInfo.gender }, profile);
+
+                // Upload to Cloud (Cloudinary)
+                const pdfUrl = await uploadPdfToCloudinary(pdfBlob, `RX_RECORD_${userId}_${Date.now()}.pdf`);
+
+                // Finalize in Firestore
+                await addPrescription({ ...rxData, pdfUrl });
+
+                showToast('Prescription generated and securely saved to cloud.', 'success');
+                closeRxModal();
+                await reload();
+            } catch (e) {
+                errEl.textContent = 'Operational Failure: ' + e.message;
+                errEl.classList.add('show');
+            } finally {
+                btn.disabled = false;
+            }
+        };
+
+        init();
+        window.addEventListener('load', () => setTimeout(() => document.getElementById('loading').classList.add('hidden'), 500));
+    </script>
+</body>
+
+</html>

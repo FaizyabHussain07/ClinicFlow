@@ -1,0 +1,106 @@
+// ============================================================
+// firestore.rules - Firestore Security Rules
+// ClinicFlow – Smart Clinic Management System
+// ============================================================
+//
+// HOW TO DEPLOY:
+// 1. Install Firebase CLI:  npm install -g firebase-tools
+// 2. Login:                 firebase login
+// 3. Init project:          firebase init firestore
+// 4. Replace rules with this file content
+// 5. Deploy:                firebase deploy --only firestore:rules
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper Functions ─────────────────────────────────────
+
+    // Check if user is authenticated
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // Get the current user's profile from Firestore
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Check user role
+    function hasRole(role) {
+      return isAuth() && userDoc().role == role;
+    }
+
+    // Check if admin (Hardcoded Super Admin + Role Check)
+    function isAdmin() {
+      return isAuth() && (request.auth.uid == 'gEe5SjkM9bSKtrZcGRDwX7PwT5z1' || userDoc().role == 'admin');
+    }
+
+    // Check if doctor
+    function isDoctor() {
+      return hasRole('doctor');
+    }
+
+    // Check if receptionist
+    function isReceptionist() {
+      return hasRole('receptionist');
+    }
+
+    // Admin or Receptionist
+    function isAdminOrReceptionist() {
+      return isAdmin() || isReceptionist();
+    }
+
+    // Check if user owns the document (by doctorId field)
+    function isOwner(field) {
+      return isAuth() && resource.data[field] == request.auth.uid;
+    }
+
+    // ── Users Collection ─────────────────────────────────────
+    match /users/{userId} {
+      // Any authenticated user can read their own profile
+      allow read: if isAuth() && request.auth.uid == userId;
+      // Admin can read all user profiles (for dropdown lists)
+      allow read: if isAdmin();
+      // Doctors and Receptionists can read all users (to get doctor names)
+      allow read: if isDoctor() || isReceptionist();
+      // Only admin can create/delete users
+      allow create, delete: if isAdmin();
+      // Users can update their own profile; admin can update any
+      allow update: if isAuth() && (request.auth.uid == userId || isAdmin());
+    }
+
+    // ── Patients Collection ──────────────────────────────────
+    match /patients/{patientId} {
+      // All authenticated users can read patients
+      allow read: if isAuth();
+      // Admin and Receptionist can create patients
+      allow create: if isAdminOrReceptionist();
+      // Admin and Receptionist can update/delete patients
+      allow update, delete: if isAdminOrReceptionist();
+    }
+
+    // ── Appointments Collection ──────────────────────────────
+    match /appointments/{appointmentId} {
+      // All authenticated users can read appointments
+      allow read: if isAuth();
+      // Admin and Receptionist can create, update, delete appointments
+      allow create, delete: if isAdminOrReceptionist();
+      allow update: if isAdminOrReceptionist() || isDoctor();
+    }
+
+    // ── Prescriptions Collection ─────────────────────────────
+    match /prescriptions/{prescriptionId} {
+      // All authenticated users can read prescriptions
+      allow read: if isAuth();
+      // Only doctors and admins can create prescriptions
+      allow create: if isDoctor() || isAdmin();
+      // Doctors can only update their own prescriptions; admin can update any
+      allow update: if (isDoctor() && isOwner('doctorId')) || isAdmin();
+      // Only admin can delete prescriptions
+      allow delete: if isAdmin();
+    }
+
+  }
+}

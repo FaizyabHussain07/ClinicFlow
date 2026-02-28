@@ -1,0 +1,58 @@
+{
+    "rules": {
+        "users": {
+            ".read": "auth != null",
+            ".indexOn": [
+                "role"
+            ],
+            "$uid": {
+                ".read": "auth != null",
+                ".write": "auth != null && (!data.exists() || auth.uid === $uid || auth.uid === 'gEe5SjkM9bSKtrZcGRDwX7PwT5z1' || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+                ".validate": "newData.hasChildren(['name', 'email', 'role'])",
+                "role": {
+                    ".validate": "newData.val() === 'doctor' || newData.val() === 'receptionist' || newData.val() === 'patient' || (newData.val() === 'admin' && (auth.uid === 'gEe5SjkM9bSKtrZcGRDwX7PwT5z1' || root.child('users').child(auth.uid).child('role').val() === 'admin'))"
+                }
+            }
+        },
+        "patients": {
+            ".read": "auth != null",
+            ".write": "auth != null && (auth.uid === 'gEe5SjkM9bSKtrZcGRDwX7PwT5z1' || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'receptionist')",
+            "$patientId": {
+                ".validate": "newData.hasChildren(['name', 'age', 'gender'])"
+            }
+        },
+        "diseaseForms": {
+            ".read": "auth != null",
+            ".indexOn": [
+                "patientId"
+            ],
+            "$formId": {
+                ".write": "auth != null && (auth.uid === 'gEe5SjkM9bSKtrZcGRDwX7PwT5z1' || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'receptionist' || (newData.exists() && newData.child('patientId').val() === auth.uid) || (data.exists() && data.child('patientId').val() === auth.uid))",
+                ".validate": "newData.hasChildren(['patientId', 'symptoms'])"
+            }
+        },
+        "appointments": {
+            ".read": "auth != null",
+            ".indexOn": [
+                "patientId",
+                "doctorId",
+                "date"
+            ],
+            "$appointmentId": {
+                ".write": "auth != null && (auth.uid === 'gEe5SjkM9bSKtrZcGRDwX7PwT5z1' || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'receptionist' || root.child('users').child(auth.uid).child('role').val() === 'doctor')",
+                ".validate": "newData.hasChildren(['patientId', 'doctorId', 'date'])"
+            }
+        },
+        "prescriptions": {
+            ".read": "auth != null",
+            ".indexOn": [
+                "patientId",
+                "doctorId"
+            ],
+            "$prescriptionId": {
+                ".write": "auth != null && (auth.uid === 'gEe5SjkM9bSKtrZcGRDwX7PwT5z1' || root.child('users').child(auth.uid).child('role').val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'doctor')",
+                ".validate": "newData.hasChildren(['patientId', 'doctorId', 'medicines'])"
+            }
+        }
+    }
+}

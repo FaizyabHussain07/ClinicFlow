@@ -6,7 +6,8 @@ import {
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
-    createUserWithEmailAndPassword
+    createUserWithEmailAndPassword,
+    sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import { auth } from './firebase-config.js';
@@ -46,8 +47,8 @@ export async function loginUser(email, password) {
 /**
  * Signup function
  */
-export async function signupUser(email, password, name, role) {
-    if (role === 'admin') throw new Error('Admin registration is restricted.');
+export async function signupUser(email, password, name, role, isEmergency = false) {
+    if (role === 'admin' && !isEmergency) throw new Error('Admin registration is restricted.');
 
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     const userData = {
@@ -83,6 +84,13 @@ export async function logoutUser() {
     if (!currentLoc.includes('login.html')) {
         window.location.href = '../pages/login.html';
     }
+}
+
+/**
+ * Reset Password function
+ */
+export async function resetPassword(email) {
+    await sendPasswordResetEmail(auth, email);
 }
 
 /**

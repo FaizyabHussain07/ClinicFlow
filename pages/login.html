@@ -94,6 +94,10 @@
                         </svg>
                         <input type="password" id="login-password" class="form-control" placeholder="••••••••">
                     </div>
+                    <div style="text-align: right; margin-top: 5px;">
+                        <a href="javascript:void(0)" onclick="toggleAuth('reset')"
+                            style="font-size: 13px; color: var(--primary); text-decoration: none;">Forgot Password?</a>
+                    </div>
                 </div>
                 <button class="btn btn-primary btn-block btn-lg" id="login-btn" onclick="handleLogin()">
                     <span id="login-text">Sign In</span>
@@ -156,13 +160,43 @@
                 <button class="btn btn-outline btn-block" onclick="toggleAuth('login')">Sign In Instead</button>
             </div>
         </div>
+
+        <!-- Reset Password Section -->
+        <div id="section-reset" class="auth-section">
+            <div id="reset-error" class="error-message"></div>
+            <div id="reset-success" class="success-message"></div>
+            <div class="login-form">
+                <div class="form-group">
+                    <label>Enter your email to reset password</label>
+                    <div class="input-icon">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                            <polyline points="22,6 12,13 2,6" />
+                        </svg>
+                        <input type="email" id="reset-email" class="form-control" placeholder="your@email.com">
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block btn-lg" id="reset-btn" onclick="handleResetPassword()">
+                    <span id="reset-text">Send Reset Email</span>
+                </button>
+                <div class="login-divider">KNOW YOUR PASSWORD?</div>
+                <button class="btn btn-outline btn-block" onclick="toggleAuth('login')">Back to Login</button>
+                <div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed var(--border);">
+                    <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 5px; text-align: center;">
+                        Emergency Setup (Forgot Admin?)</p>
+                    <button class="btn btn-outline btn-block" onclick="handleSetupAdmin()"
+                        style="font-size: 12px; border-color: #fca5a5; color: #dc2626;">Create default Admin
+                        (admin@gmail.com)</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { auth } from '../firebase-config.js';
         import { getUserDoc } from '../database.js';
-        import { loginUser, signupUser } from '../auth.js';
+        import { loginUser, signupUser, resetPassword, createAdminAccount } from '../auth.js';
 
         const ROLE_REDIRECT = {
             admin: 'admin-dashboard.html',
@@ -183,8 +217,17 @@
         window.toggleAuth = (mode) => {
             document.querySelectorAll('.auth-section').forEach(s => s.classList.remove('active'));
             document.getElementById(`section-${mode}`).classList.add('active');
-            document.getElementById('auth-title').textContent = mode === 'login' ? 'Welcome Back' : 'Create Account';
-            document.getElementById('auth-subtitle').textContent = mode === 'login' ? 'Enter your credentials to access your portal' : 'Join ClinicFlow to manage your medical record';
+
+            if (mode === 'login') {
+                document.getElementById('auth-title').textContent = 'Welcome Back';
+                document.getElementById('auth-subtitle').textContent = 'Enter your credentials to access your portal';
+            } else if (mode === 'signup') {
+                document.getElementById('auth-title').textContent = 'Create Account';
+                document.getElementById('auth-subtitle').textContent = 'Join ClinicFlow to manage your medical record';
+            } else if (mode === 'reset') {
+                document.getElementById('auth-title').textContent = 'Reset Password';
+                document.getElementById('auth-subtitle').textContent = 'We\'ll send a link to your email';
+            }
         };
 
         let selectedRole = 'patient';
@@ -247,6 +290,49 @@
                 errEl.classList.add('show');
                 btn.disabled = false;
                 document.getElementById('signup-text').textContent = 'Create Account';
+            }
+        };
+
+        window.handleResetPassword = async () => {
+            const email = document.getElementById('reset-email').value.trim();
+            const errEl = document.getElementById('reset-error');
+            const okEl = document.getElementById('reset-success');
+            errEl.classList.remove('show'); okEl.classList.remove('show');
+
+            if (!email) {
+                errEl.textContent = 'Please enter your email address.';
+                errEl.classList.add('show'); return;
+            }
+
+            const btn = document.getElementById('reset-btn');
+            btn.disabled = true;
+            document.getElementById('reset-text').textContent = 'Sending Link...';
+
+            try {
+                await resetPassword(email);
+                okEl.textContent = 'Password reset link has been sent to your email!';
+                okEl.classList.add('show');
+            } catch (e) {
+                errEl.textContent = e.message;
+                errEl.classList.add('show');
+                btn.disabled = false;
+                document.getElementById('reset-text').textContent = 'Send Reset Email';
+            }
+        };
+
+        window.handleSetupAdmin = async () => {
+            const errEl = document.getElementById('reset-error');
+            const okEl = document.getElementById('reset-success');
+            errEl.classList.remove('show'); okEl.classList.remove('show');
+
+            try {
+                if (!confirm('This will create the default admin account: admin@gmail.com / adminclinic. Proceed?')) return;
+                await createAdminAccount('admin@gmail.com', 'adminclinic', 'Clinic Admin');
+                okEl.textContent = 'Admin account created! You can now login with admin@gmail.com / adminclinic';
+                okEl.classList.add('show');
+            } catch (e) {
+                errEl.textContent = 'Setup Failed: ' + (e.message.includes('email-already-in-use') ? 'This email is already registered.' : e.message);
+                errEl.classList.add('show');
             }
         };
 

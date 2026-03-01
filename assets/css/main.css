@@ -2130,3 +2130,22 @@ textarea.form-control {
     .stats-grid { grid-template-columns: 1fr; }
     .profile-view { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 1024px) {
+    .app-layout { flex-direction: column; }
+    .sidebar { position: fixed !important; transform: translateX(-100%); z-index: 1000; box-shadow: 10px 0 30px rgba(0,0,0,0.1); transition: transform .3s ease; height: 100vh; width: 260px; }
+    .sidebar.open { transform: translateX(0); }
+    .main-content { margin-left: 0 !important; width: 100%; min-width: 0; }
+    .topbar { width: 100%; padding: 0 16px; position: sticky; top: 0; z-index: 50; }
+    .hamburger { display: flex !important; }
+    .content-area { padding: 16px; }
+    .features-grid { grid-template-columns: 1fr; }
+    table.data-table { display: block; overflow-x: auto; white-space: nowrap; }
+}
+
+@media (max-width: 600px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .profile-view { flex-direction: column; }
+    .card-body { padding: 16px; }
+    .topbar-title { font-size: 16px; }
+}

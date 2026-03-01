@@ -8,7 +8,8 @@ import {
     onAuthStateChanged,
     createUserWithEmailAndPassword,
     sendPasswordResetEmail,
-    getAuth
+    getAuth,
+    updatePassword
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
@@ -143,10 +144,18 @@ export async function logoutUser() {
 }
 
 /**
- * Reset Password function
+ * Reset Password function via Email
  */
 export async function resetPassword(email) {
     await sendPasswordResetEmail(auth, email);
+}
+
+/**
+ * Update Current User Password
+ */
+export async function updateUserPassword(newPassword) {
+    if (!auth.currentUser) throw new Error("No user is currently signed in.");
+    await updatePassword(auth.currentUser, newPassword);
 }
 
 /**

@@ -1,6 +1,8 @@
-# ClinicFlow – Smart Clinic Management System
-
-> A complete, production-ready Clinic Management System built with HTML, CSS, Vanilla JavaScript, Firebase, and Cloudinary.
+<div align="center">
+  <img src="assets/images/logo.png" alt="ClinicFlow Logo" width="150" style="border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px;" />
+  <h1>ClinicFlow – Smart Clinic Management System</h1>
+  <p><strong>A complete, highly-optimized, and production-ready Clinic Management System built with HTML, CSS, Vanilla JS, and Firebase.</strong></p>
+</div>
 
 ---
 
@@ -8,6 +10,7 @@
 
 | Feature | Description |
 |---|---|
+| **Professional SEO & Branding**| Fully optimized with SEO tags, Open Graph meta tags, and a custom logo/favicon |
 | **Auth & Roles** | Firebase Email/Password Auth with role-based access (Admin, Doctor, Receptionist) |
 | **Patient Management** | Full CRUD, search/filter, patient profile with medical timeline |
 | **Appointment Management** | Book, edit, filter by date/status, inline status updates |

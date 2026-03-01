@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Dashboard | ClinicFlow</title>
+    <!-- SEO Optimization -->
+    <meta name="description" content="Patient Dashboard | ClinicFlow. ClinicFlow is a modern clinic management system.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="ClinicFlow Team">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <link rel="stylesheet" href="../assets/css/main.css">
 </head>
 
@@ -15,7 +21,8 @@
             <div class="loader-logo">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path
-                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
+                    </path>
                 </svg>
             </div>
             <div class="loader-spinner"></div>
@@ -27,18 +34,21 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-brand">
-                <div class="brand-logo">
-                    <div class="brand-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path
-                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-                        </svg>
+                <a href="../index.html" style="text-decoration:none;">
+                    <div class="brand-logo">
+                        <div class="brand-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="brand-text">
+                            <h2>ClinicFlow</h2>
+                            <span>Health System</span>
+                        </div>
                     </div>
-                    <div class="brand-text">
-                        <h2>ClinicFlow</h2>
-                        <span>Health System</span>
-                    </div>
-                </div>
+                </a>
             </div>
 
             <div class="sidebar-user">
@@ -53,36 +63,36 @@
                 <p class="nav-section-title">Record Management</p>
                 <a href="#" class="nav-item active" onclick="switchTab('tab-new-case', this)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 5v14M5 12h14" />
+                        <path d="M12 5v14M5 12h14"></path>
                     </svg>
                     Submit Disease Form
                 </a>
                 <a href="#" class="nav-item" onclick="switchTab('tab-history', this)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                        <polyline points="14 2 14 8 20 8" />
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
                     </svg>
                     My Disease History
                 </a>
                 <a href="#" class="nav-item" onclick="switchTab('tab-appts', this)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                        <line x1="16" y1="2" x2="16" y2="6" />
-                        <line x1="8" y1="2" x2="8" y2="6" />
-                        <line x1="3" y1="10" x2="21" y2="10" />
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
                     My Appointments
                 </a>
                 <a href="#" class="nav-item" onclick="switchTab('tab-rx', this)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
                     </svg>
                     Medical Prescriptions
                 </a>
                 <a href="#" class="nav-item" onclick="switchTab('tab-profile', this)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                     Account Settings
                 </a>
@@ -92,9 +102,9 @@
             <div class="sidebar-footer">
                 <button class="btn-logout" id="logout-btn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                        <polyline points="16 17 21 12 16 7" />
-                        <line x1="21" y1="12" x2="9" y2="12" />
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
                     </svg>
                     Sign Out
                 </button>
@@ -172,8 +182,8 @@
                         <div class="page-header-right">
                             <button class="btn-refresh" onclick="reloadAllData()" title="Sync Records">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M23 4v6h-6" />
-                                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                                    <path d="M23 4v6h-6"></path>
+                                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
                                 </svg>
                             </button>
                         </div>
@@ -253,41 +263,63 @@
                 <div id="tab-profile" class="tab-content" style="display:none;">
                     <div class="page-header">
                         <div class="page-header-left">
-                            <h1>My Clinical Profile</h1>
-                            <p>Internal clinic account details.</p>
+                            <h1>Account Settings</h1>
+                            <p>Manage your profile, personal details, and account security.</p>
                         </div>
                     </div>
                     <div class="card">
-                        <div class="card-body">
-                            <div class="profile-view">
-                                <div class="profile-sidebar">
-                                    <div class="profile-avatar-large" id="prof-avatar">?</div>
-                                    <h2 id="prof-name">—</h2>
-                                    <p class="text-secondary" id="prof-role-sub">Patient Access</p>
+                        <div class="card-body" style="display: flex; gap: 30px; flex-wrap: wrap;">
+                            <!-- Profile Info Form -->
+                            <div style="flex: 1; min-width: 300px;">
+                                <h3 style="margin-bottom: 16px;">Personal Details</h3>
+                                <div class="form-group">
+                                    <label>Avatar URL (Optional Image Link)</label>
+                                    <input type="text" id="prof-edit-avatar" class="form-control"
+                                        placeholder="https://example.com/photo.jpg">
                                 </div>
-                                <div class="profile-info">
-                                    <div class="card" style="margin-bottom:0">
-                                        <div class="card-header">
-                                            <div class="card-title">Discovery Details</div>
-                                        </div>
-                                        <div class="card-body">
-                                            <div style="margin-bottom:20px;"><label
-                                                    style="font-size:12px; font-weight:700; color:var(--text-muted)">SYSTEM
-                                                    UID</label>
-                                                <p id="prof-id" style="font-weight:600; margin-top:4px;">—</p>
-                                            </div>
-                                            <div style="margin-bottom:20px;"><label
-                                                    style="font-size:12px; font-weight:700; color:var(--text-muted)">EMAIL
-                                                    ADDRESS</label>
-                                                <p id="prof-email" style="font-weight:600; margin-top:4px;">—</p>
-                                            </div>
-                                            <div style="margin-bottom:20px;"><label
-                                                    style="font-size:12px; font-weight:700; color:var(--text-muted)">JOINED
-                                                    SINCE</label>
-                                                <p id="prof-joined" style="font-weight:600; margin-top:4px;">—</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="form-group mt-16" style="margin-top:16px;">
+                                    <label>Full Name</label>
+                                    <input type="text" id="prof-edit-name" class="form-control">
+                                </div>
+                                <div class="form-group mt-16" style="margin-top:16px;">
+                                    <label>Email Address</label>
+                                    <input type="email" id="prof-edit-email" class="form-control" disabled=""
+                                        style="background:#e2e8f0; cursor:not-allowed;">
+                                </div>
+                                <div class="form-group mt-16" style="margin-top:16px;">
+                                    <label>Phone Number</label>
+                                    <input type="text" id="prof-edit-phone" class="form-control"
+                                        placeholder="+92 300 0000000">
+                                </div>
+                                <div class="form-group mt-16" style="margin-top:16px;">
+                                    <label>Address / Location</label>
+                                    <textarea id="prof-edit-address" class="form-control" placeholder="..."
+                                        rows="2"></textarea>
+                                </div>
+                                <button class="btn btn-primary mt-24" style="margin-top:24px;" id="btn-update-profile"
+                                    onclick="handleUpdateProfile()">
+                                    Save Profile Details
+                                </button>
+                            </div>
+
+                            <!-- Security Form -->
+                            <div style="flex: 1; min-width: 300px;">
+                                <h3 style="margin-bottom: 16px;">Security Settings</h3>
+                                <div class="form-group">
+                                    <label>New Password</label>
+                                    <input type="password" id="prof-edit-password" class="form-control"
+                                        placeholder="Enter new password (min 6 chars)">
+                                </div>
+                                <button class="btn btn-secondary mt-24" style="margin-top:24px;"
+                                    id="btn-update-password" onclick="handleUpdatePassword()">
+                                    Update Password
+                                </button>
+                                <div class="mt-24"
+                                    style="margin-top:24px; padding:12px; background:rgba(255,0,0,0.05); border-radius:8px;">
+                                    <p style="font-size: 13px; color: var(--text-muted); margin:0;">
+                                        <strong>Note:</strong> Updating your password will require you to log in again
+                                        immediately for security purposes.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -456,9 +488,9 @@
                         <td>${formatDate(r.createdAt)}</td>
                         <td>${(r.medicines || []).length} Medicines</td>
                         <td>
-                            <a href="${r.pdfUrl || '#'}" target="_blank" class="btn btn-outline btn-sm" ${!r.pdfUrl ? 'disabled' : ''} download="Prescription_${r.id}.pdf">
+                            <a href="${r.imageUrl || '#'}" target="_blank" class="btn btn-outline btn-sm" ${!r.imageUrl ? 'disabled' : ''} download="Prescription_${r.id}.jpg">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                Download PDF
+                                View Image / Download
                             </a>
                         </td>
                     </tr>
@@ -478,6 +510,145 @@
             const loader = document.getElementById('loading');
             if (loader) loader.classList.add('hidden');
         });
+
+        // -- INJECTED PROFILE LOGIC --
+        window.handleUpdateProfile = async () => {
+            const btn = document.getElementById('btn-update-profile');
+            const name = document.getElementById('prof-edit-name').value.trim();
+            const avatarUrl = document.getElementById('prof-edit-avatar').value.trim();
+            const phone = document.getElementById('prof-edit-phone').value.trim();
+            const address = document.getElementById('prof-edit-address').value.trim();
+            const age = document.getElementById('prof-edit-age') ? document.getElementById('prof-edit-age').value.trim() : null;
+            const gender = document.getElementById('prof-edit-gender') ? document.getElementById('prof-edit-gender').value.trim() : null;
+
+            if (!name) {
+                const { showToast } = await import('../assets/js/utils.js');
+                showToast('Name cannot be empty.', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            try {
+                const { updateUserDoc } = await import('../database.js');
+                const { showToast, getInitials } = await import('../assets/js/utils.js');
+
+                let targetUid = null;
+                if (typeof userId !== 'undefined') targetUid = userId;
+                else if (typeof profile !== 'undefined' && profile.id) targetUid = profile.id;
+                else if (typeof currentAdmin !== 'undefined' && currentAdmin.id) targetUid = currentAdmin.id;
+                else {
+                    const { auth } = await import('../firebase-config.js');
+                    if (auth.currentUser) targetUid = auth.currentUser.uid;
+                }
+
+                if (!targetUid) throw new Error("Could not find User ID");
+
+                await updateUserDoc(targetUid, { name, avatarUrl, phone, address, age, gender });
+                showToast('Profile updated successfully!', 'success');
+
+                if (document.getElementById('sidebar-name')) document.getElementById('sidebar-name').textContent = name;
+                if (document.getElementById('welcome-msg')) document.getElementById('welcome-msg').textContent = "Hello, " + name.split(' ')[0];
+                if (document.getElementById('sidebar-avatar')) {
+                    if (avatarUrl) {
+                        document.getElementById('sidebar-avatar').innerHTML = "<img src='" + avatarUrl + "' style='width:100%; height:100%; border-radius:50%; object-fit:cover;'>";
+                        document.getElementById('sidebar-avatar').style.padding = '0';
+                    } else {
+                        document.getElementById('sidebar-avatar').innerHTML = getInitials(name);
+                    }
+                }
+
+                if (typeof profile !== 'undefined' && profile) {
+                    profile.name = name;
+                    profile.avatarUrl = avatarUrl;
+                    profile.phone = phone;
+                    profile.address = address;
+                }
+                if (typeof currentAdmin !== 'undefined' && currentAdmin) {
+                    currentAdmin.name = name;
+                    currentAdmin.avatarUrl = avatarUrl;
+                    currentAdmin.phone = phone;
+                    currentAdmin.address = address;
+                }
+
+            } catch (error) {
+                const { showToast } = await import('../assets/js/utils.js');
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Profile Details';
+            }
+        };
+
+        window.handleUpdatePassword = async () => {
+            const btn = document.getElementById('btn-update-password');
+            const newPassword = document.getElementById('prof-edit-password').value;
+
+            const { showToast } = await import('../assets/js/utils.js');
+
+            if (newPassword.length < 6) {
+                showToast('Password must be at least 6 characters long.', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Updating...';
+
+            try {
+                const { updateUserPassword, logoutUser } = await import('../auth.js');
+                await updateUserPassword(newPassword);
+                showToast('Password updated successfully! Please log in again.', 'success');
+                setTimeout(() => logoutUser(), 2000);
+            } catch (error) {
+                let msg = error.message;
+                if (error.code === 'auth/requires-recent-login') {
+                    msg = 'Please log out and log back in to change your password.';
+                }
+                showToast('Error: ' + msg, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Update Password';
+            }
+        };
+
+        function populateProfileFields(p) {
+            if (document.getElementById('prof-edit-name')) document.getElementById('prof-edit-name').value = p.name || '';
+            if (document.getElementById('prof-edit-email')) document.getElementById('prof-edit-email').value = p.email || '';
+            if (document.getElementById('prof-edit-avatar')) document.getElementById('prof-edit-avatar').value = p.avatarUrl || '';
+            if (document.getElementById('prof-edit-phone')) document.getElementById('prof-edit-phone').value = p.phone || '';
+            if (document.getElementById('prof-edit-address')) document.getElementById('prof-edit-address').value = p.address || '';
+             if(document.getElementById('prof-edit-age')) document.getElementById('prof-edit-age').value = p.age || ''; if(document.getElementById('prof-edit-gender')) document.getElementById('prof-edit-gender').value = p.gender || '';
+        }
+
+        setTimeout(async () => {
+            try {
+                const { auth } = await import('../firebase-config.js');
+                const { getUserDoc } = await import('../database.js');
+                const { getInitials } = await import('../assets/js/utils.js');
+
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        const p = await getUserDoc(user.uid);
+                        if (p) {
+                            populateProfileFields(p);
+                            const sidebarAvatar = document.getElementById('sidebar-avatar');
+                            if (sidebarAvatar) {
+                                if (p.avatarUrl) {
+                                    sidebarAvatar.innerHTML = "<img src='" + p.avatarUrl + "' style='width:100%; height:100%; border-radius:50%; object-fit:cover;'>";
+                                    sidebarAvatar.style.padding = '0';
+                                } else {
+                                    sidebarAvatar.innerHTML = getInitials(p.name);
+                                    sidebarAvatar.style.padding = '';
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error("Profile settings initialization error:", e);
+            }
+        }, 800);
     </script>
 </body>
 

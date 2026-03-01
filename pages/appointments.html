@@ -5,11 +5,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Appointments – ClinicFlow</title>
+    <!-- SEO Optimization -->
+    <meta name="description" content="Appointments – ClinicFlow. ClinicFlow is a modern clinic management system." />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="ClinicFlow Team" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png" />
     <link rel="stylesheet" href="../assets/css/main.css" />
 </head>
 
 <body>
-    <div id="loading" class="page-loader">
+    <!-- <div id="loading" class="page-loader">
         <div class="loader-content">
             <div class="loader-logo">
                 <svg viewBox="0 0 24 24" fill="white">
@@ -19,21 +25,20 @@
             </div>
             <div class="loader-text">Clinic<span>Flow</span></div>
             <div class="loader-spinner"></div>
-        </div>
+        </div> -->
     </div>
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <div class="app-layout">
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-brand">
-                <div class="brand-logo">
-                    <div class="brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                            <path
-                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-                        </svg></div>
-                    <div class="brand-text">
-                        <h2>ClinicFlow</h2><span id="brand-role">Portal</span>
+                <a href="../index.html" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
+                    <div class="brand-logo">
+                        <img src="../assets/images/logo.png" style="width:32px; height:32px; border-radius:8px;">
                     </div>
-                </div>
+                    <div class="brand-text" style="color:var(--text);">
+                        <h2>ClinicFlow</h2>
+                    </div>
+                </a>
             </div>
             <div class="sidebar-user">
                 <div class="user-avatar" id="sidebar-avatar">--</div>

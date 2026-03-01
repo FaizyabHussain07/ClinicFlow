@@ -4,20 +4,20 @@
 // ============================================================
 
 import { CLOUDINARY_CONFIG } from './firebase-config.js';
-import { showToast, showLoading, hideLoading, generatePrescriptionPDF, uploadPdfToCloudinary as utilUpload } from './assets/js/utils.js';
+import { showToast, showLoading, hideLoading, generatePrescriptionImage, uploadImageToCloudinary as utilUpload } from './assets/js/utils.js';
 
 // Re-export for compatibility across legacy portal pages
-export { generatePrescriptionPDF } from './assets/js/utils.js';
+export { generatePrescriptionImage } from './assets/js/utils.js';
 
 /**
- * Optimized PDF Archival stream
+ * Optimized Image Archival stream
  * This ensures zero-friction delivery by using 'raw' file storage.
  */
-export async function uploadPdfToCloudinary(pdfBlob, fileName) {
+export async function uploadImageToCloudinary(imageBlob, fileName) {
     showLoading('Archiving Prescription...');
     try {
         // Use the centralized utility with the refined 'raw' storage logic
-        const secureUrl = await utilUpload(pdfBlob, fileName);
+        const secureUrl = await utilUpload(imageBlob, fileName);
         hideLoading();
         return secureUrl;
     } catch (error) {
@@ -29,16 +29,16 @@ export async function uploadPdfToCloudinary(pdfBlob, fileName) {
 }
 
 /**
- * Download PDF locally as a fallback mechanism
+ * Download Image locally as a fallback mechanism
  */
-export function downloadPrescriptionPDF(prescription, patient, doctor) {
+export function downloadPrescriptionImage(prescription, patient, doctor) {
     try {
-        const blob = generatePrescriptionPDF(prescription, patient, doctor);
+        const blob = generatePrescriptionImage(prescription, patient, doctor);
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         const safeName = (patient?.name || 'patient').replace(/\s/g, '_');
-        a.download = `RX_${safeName}_${Date.now()}.pdf`;
+        a.download = `RX_${safeName}_${Date.now()}.jpg`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

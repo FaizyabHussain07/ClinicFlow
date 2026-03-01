@@ -41,6 +41,10 @@ export async function getUserDoc(uid) {
     return snap.exists() ? snap.val() : null;
 }
 
+export async function updateUserDoc(uid, data) {
+    await update(ref(rtdb, 'users/' + uid), data);
+}
+
 export async function getAllUsers() {
     const snap = await get(ref(rtdb, 'users'));
     return snapToArray(snap);
